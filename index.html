@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Election Simulator</title>
+  <meta name="description" content="Interactive election simulator: Hungary, Budapest, European Parliament, Germany, France, UK and USA." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><span class="logo"></span>Election Simulator</div>
+      <nav id="country-nav"></nav>
+    </div>
+  </header>
+  <main id="app"></main>
+  <footer>
+    Simulation tool – results are projections based on simplified models of each electoral system. Baseline data is approximate and editable in <code>js/countries/*.js</code>.
+  </footer>
+
+  <!-- libraries -->
+  <script src="lib/d3.min.js"></script>
+  <script src="lib/topojson-client.min.js"></script>
+  <!-- geodata -->
+  <script src="data/geo-us.js"></script>
+  <script src="data/geo-world.js"></script>
+  <script src="data/geo-de.js"></script>
+  <script src="data/hex-uk.js"></script>
+  <script src="data/uk-2024.js"></script>
+  <script src="data/geo-budapest.js"></script>
+  <!-- core -->
+  <script src="js/core.js"></script>
+  <!-- countries (order = nav order) -->
+  <script src="js/countries/hungary.js"></script>
+  <script src="js/countries/budapest.js"></script>
+  <script src="js/countries/eu.js"></script>
+  <script src="js/countries/germany.js"></script>
+  <script src="js/countries/france.js"></script>
+  <script src="js/countries/uk.js"></script>
+  <script src="js/countries/usa.js"></script>
+  <script>ES.start();</script>
+</body>
+</html>
