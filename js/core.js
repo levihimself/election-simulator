@@ -349,19 +349,20 @@
       { id: 'GOP', short: 'Republicans', name: 'Republican Party (GOP)', leader: 'J.D. Vance / Marco Rubio', era: '2028 Presidential', pos: 'Right-wing', score: 7.8, tags: 'American conservatism, National conservatism, Right-wing populism', bloc: 'Red States', color: '#d8343b' },
     ],
     israel: [
-      { id: 'HADASH', short: "Hadash–Ta'al", name: "Hadash–Ta'al", leader: 'Ayman Odeh & Ahmad Tibi', era: '2026 Knesset', pos: 'Left-wing', score: 1.8, tags: 'Arab-Jewish socialism, Two-state solution, Secularism', bloc: 'Arab bloc', color: '#dc2626' },
-      { id: 'BALAD', short: 'Balad', name: 'Balad (National Democratic Assembly)', leader: 'Sami Abu Shehadeh', era: '2026 Knesset', pos: 'Left-wing', score: 2.2, tags: 'Arab nationalism, Left-wing nationalism, State of all its citizens', bloc: 'Arab bloc', color: '#ea580c' },
-      { id: 'RAAM', short: "Ra'am", name: "United Arab List (Ra'am)", leader: 'Mansour Abbas', era: '2026 Knesset', pos: 'Centre / Social conservative', score: 4.5, tags: 'Arab Israeli interests, Islamic democracy, Social conservatism', bloc: 'Opposition / Swing', color: '#15803d' },
+      { id: 'HADASH', short: "Hadash–Ta'al", name: "Hadash–Ta'al (Joint List)", leader: 'Ayman Odeh & Ahmad Tibi', era: '2026 Knesset', pos: 'Left-wing', score: 1.8, tags: 'Arab-Jewish socialism, Two-state solution, Secularism', bloc: 'Arab bloc', color: '#dc2626' },
+      { id: 'BALAD', short: 'Balad', name: 'Balad (National Democratic Assembly)', leader: 'Sami Abu Shehadeh', era: '2026 Knesset', pos: 'Left-wing', score: 2.2, tags: 'Arab nationalism, Left-wing nationalism, State of all its citizens', bloc: 'Arab bloc', color: '#991b1b' },
+      { id: 'RAAM', short: "Ra'am", name: "United Arab List (Ra'am)", leader: 'Mansour Abbas', era: '2026 Knesset', pos: 'Centre / Social conservative', score: 4.5, tags: 'Arab Israeli interests, Islamic democracy, Social conservatism', bloc: 'Arab / Swing', color: '#16a34a' },
       { id: 'DEM', short: 'The Democrats', name: 'The Democrats (Labor–Meretz Union)', leader: 'Yair Golan', era: '2026 Knesset', pos: 'Centre-left to Left-wing', score: 3.0, tags: 'Social democracy, Labor Zionism, Liberal Zionism', bloc: 'Opposition bloc', color: '#e11d48' },
       { id: 'YA', short: 'Yesh Atid', name: 'Yesh Atid', leader: 'Yair Lapid', era: '2026 Knesset', pos: 'Centre', score: 4.8, tags: 'Liberal Zionism, Secularism, Centrism', bloc: 'Opposition bloc', color: '#f97316' },
-      { id: 'NU', short: 'National Unity', name: 'National Unity (Blue and White)', leader: 'Benny Gantz', era: '2026 Knesset', pos: 'Centre to Centre-right', score: 5.5, tags: 'Statism (Mamlachtiyut), Liberal conservatism, Pragmatism', bloc: 'Opposition bloc', color: '#38bdf8' },
-      { id: 'BENNETT', short: 'Bennett 2026', name: 'Bennett 2026 (New Right)', leader: 'Naftali Bennett', era: '2026 Knesset', pos: 'Right-wing', score: 7.2, tags: 'National conservatism, Economic liberalism, Religious-secular bridge', bloc: 'Opposition bloc', color: '#059669' },
+      { id: 'YASHAR', short: 'Yashar! (Eisenkot)', name: 'Yashar! with Eisenkot (Straight!)', leader: 'Gadi Eisenkot', era: '2026 Knesset', pos: 'Centre', score: 5.1, tags: 'Centrism, National security, Institutionalism, Liberal Zionism', bloc: 'Opposition bloc', color: '#06b6d4' },
+      { id: 'NU', short: 'Blue & White', name: 'National Unity (Blue and White)', leader: 'Benny Gantz', era: '2026 Knesset', pos: 'Centre to Centre-right', score: 5.5, tags: 'Statism (Mamlachtiyut), Liberal conservatism, Pragmatism', bloc: 'Opposition bloc', color: '#38bdf8' },
+      { id: 'BENNETT', short: "Bennett (B'Yachad)", name: "Bennett 2026 / B'Yachad", leader: 'Naftali Bennett', era: '2026 Knesset', pos: 'Right-wing', score: 7.2, tags: 'National conservatism, Economic liberalism, Religious-secular bridge', bloc: 'Opposition bloc', color: '#059669' },
       { id: 'YB', short: 'Yisrael Beiteinu', name: 'Yisrael Beiteinu', leader: 'Avigdor Lieberman', era: '2026 Knesset', pos: 'Right-wing', score: 7.4, tags: 'Secular nationalism, Revisionist Zionism', bloc: 'Opposition bloc', color: '#0284c7' },
       { id: 'LIKUD', short: 'Likud', name: 'Likud – National Liberal Movement', leader: 'Benjamin Netanyahu', era: '2026 Knesset', pos: 'Right-wing', score: 7.6, tags: 'National conservatism, Revisionist Zionism, Right-wing populism', bloc: 'Netanyahu bloc', color: '#1d4ed8' },
       { id: 'SHAS', short: 'Shas', name: 'Shas (Sephardic Shomrei Torah)', leader: 'Aryeh Deri', era: '2026 Knesset', pos: 'Right-wing (Religious)', score: 7.8, tags: 'Sephardic Haredi interests, Religious conservatism, Welfare', bloc: 'Netanyahu bloc', color: '#d97706' },
       { id: 'UTJ', short: 'UTJ', name: 'United Torah Judaism', leader: 'Yitzhak Goldknopf & Moshe Gafni', era: '2026 Knesset', pos: 'Right-wing (Religious)', score: 8.0, tags: 'Ashkenazi Haredi interests, Halakhic conservatism', bloc: 'Netanyahu bloc', color: '#475569' },
       { id: 'RZ', short: 'Religious Zionism', name: 'Religious Zionism (Mafdal – Tkuma)', leader: 'Bezalel Smotrich', era: '2026 Knesset', pos: 'Far-right', score: 9.1, tags: 'Religious Zionism, Hardline settlement expansion, Social conservatism', bloc: 'Netanyahu bloc', color: '#7c3aed' },
-      { id: 'OY', short: 'Otzma Yehudit', name: 'Otzma Yehudit (Jewish Power)', leader: 'Itamar Ben-Gvir', era: '2026 Knesset', pos: 'Far-right', score: 9.6, tags: 'Ultranationalism, Kahanism-inspired religious nationalism', bloc: 'Netanyahu bloc', color: '#991b1b' },
+      { id: 'OY', short: 'Otzma Yehudit', name: 'Otzma Yehudit (Jewish Power)', leader: 'Itamar Ben-Gvir', era: '2026 Knesset', pos: 'Far-right', score: 9.6, tags: 'Ultranationalism, Kahanism-inspired religious nationalism', bloc: 'Netanyahu bloc', color: '#b91c1c' },
     ],
     canada: [
       { id: 'NDP', short: 'NDP', name: 'New Democratic Party (NDP)', leader: 'Jagmeet Singh', era: '2025 Federal', pos: 'Centre-left to Left-wing', score: 2.8, tags: 'Social democracy, Democratic socialism', bloc: 'Progressive', color: '#f58220' },
@@ -383,13 +384,19 @@
       { id: 'LEGA', short: 'Lega', name: 'Lega per Salvini Premier', leader: 'Matteo Salvini', era: '2022 General', pos: 'Right-wing to Far-right', score: 8.4, tags: 'Right-wing populism, Regionalism, National conservatism', bloc: 'Centre-right coalition', color: '#008055' },
       { id: 'FDI', short: 'FdI', name: "Fratelli d'Italia (Brothers of Italy)", leader: 'Giorgia Meloni', era: '2022 General', pos: 'Right-wing to Far-right', score: 8.6, tags: 'National conservatism, Right-wing populism', bloc: 'Centre-right coalition', color: '#0b3b6a' },
     ],
-    russia: [
-      { id: 'kharitonov', short: 'CPRF', name: 'Communist Party of the Russian Federation (CPRF)', leader: 'Nikolay Kharitonov', era: '2024 Presidential', pos: 'Far-left (Social conservative)', score: 1.8, tags: 'Communism, Marxism-Leninism, Soviet patriotism', bloc: 'Systemic opposition', color: '#dc2626' },
-      { id: 'duntsova', short: 'Duntsova', name: 'Independent Democratic Opposition', leader: 'Yekaterina Duntsova', era: '2024 Presidential (Scenario)', pos: 'Centre-left to Centre', score: 4.2, tags: 'Social liberalism, Peace platform, Decentralization', bloc: 'Non-systemic opposition', color: '#10b981' },
-      { id: 'nadezhdin', short: 'Civic Init.', name: 'Civic Initiative (Grazhdanskaya Initsiativa)', leader: 'Boris Nadezhdin', era: '2024 Presidential (Scenario)', pos: 'Centre to Centre-right', score: 5.2, tags: 'Liberal democracy, Constitutionalism, Anti-war reformism', bloc: 'Non-systemic opposition', color: '#0ea5e9' },
-      { id: 'davankov', short: 'New People', name: 'New People (Novye Lyudi)', leader: 'Vladislav Davankov', era: '2024 Presidential', pos: 'Centre-right', score: 5.8, tags: 'Liberalism, Entrepreneurship, Moderate modernization', bloc: 'Systemic opposition', color: '#06b6d4' },
-      { id: 'putin', short: 'Putin (ONF)', name: 'Independent / United Russia (ONF)', leader: 'Vladimir Putin', era: '2024 Presidential', pos: 'Right-wing', score: 7.8, tags: 'Russian nationalism, Statism, Conservatism, Sovereign democracy', bloc: 'Incumbent', color: '#1d4ed8' },
-      { id: 'slutsky', short: 'LDPR', name: 'Liberal Democratic Party of Russia (LDPR)', leader: 'Leonid Slutsky', era: '2024 Presidential', pos: 'Far-right', score: 9.0, tags: 'Russian ultranationalism, Imperialism, Right-wing populism', bloc: 'Systemic opposition', color: '#eab308' },
+    spain: [
+      { id: 'PODEMOS', short: 'Podemos', name: 'Podemos', leader: 'Ione Belarra / Irene Montero', era: '2023–2026 Congreso', pos: 'Left-wing to Far-left', score: 1.9, tags: 'Left-wing populism, Democratic socialism, Feminism', bloc: 'Left bloc', color: '#7e22ce' },
+      { id: 'BILDU', short: 'EH Bildu', name: 'Euskal Herria Bildu', leader: 'Arnaldo Otegi / Mertxe Aizpurua', era: '2023–2026 Congreso', pos: 'Left-wing', score: 2.1, tags: 'Basque nationalism, Basque independence, Democratic socialism', bloc: 'Regional Left', color: '#00b48d' },
+      { id: 'ERC', short: 'ERC', name: 'Esquerra Republicana de Catalunya', leader: 'Oriol Junqueras / Gabriel Rufián', era: '2023–2026 Congreso', pos: 'Left-wing', score: 2.4, tags: 'Catalan independence, Catalan republicanism, Social democracy', bloc: 'Regional Left', color: '#ffb232' },
+      { id: 'SUMAR', short: 'Sumar', name: 'Movimiento Sumar & Allies', leader: 'Yolanda Díaz', era: '2023–2026 Congreso', pos: 'Left-wing', score: 2.5, tags: 'Democratic socialism, Green politics, Progressivism, Labor rights', bloc: 'Left bloc', color: '#e51c55' },
+      { id: 'BNG', short: 'BNG', name: 'Bloque Nacionalista Galego', leader: 'Ana Pontón / Néstor Rego', era: '2023–2026 Congreso', pos: 'Left-wing', score: 2.6, tags: 'Galician nationalism, Socialism, Euroscepticism', bloc: 'Regional Left', color: '#38bdf8' },
+      { id: 'PSOE', short: 'PSOE', name: 'Partido Socialista Obrero Español (PSOE)', leader: 'Pedro Sánchez', era: '2023–2026 Congreso', pos: 'Centre-left', score: 3.6, tags: 'Social democracy, Pro-Europeanism, Federalism', bloc: 'Left bloc', color: '#ef1c27' },
+      { id: 'PNV', short: 'EAJ-PNV', name: 'Partido Nacionalista Vasco (EAJ-PNV)', leader: 'Aitor Esteban / Andoni Ortuzar', era: '2023–2026 Congreso', pos: 'Centre to Centre-right', score: 5.8, tags: 'Basque nationalism, Christian democracy, Liberalism', bloc: 'Regional Centre', color: '#16a34a' },
+      { id: 'CC', short: 'CC / Reg.', name: 'Coalición Canaria & Regionalists (UPN)', leader: 'Fernando Clavijo / Cristina Valido', era: '2023–2026 Congreso', pos: 'Centre to Centre-right', score: 5.9, tags: 'Canary regionalism, Centrism, Autonomy', bloc: 'Regional Centre', color: '#eab308' },
+      { id: 'JUNTS', short: 'Junts', name: 'Junts per Catalunya', leader: 'Carles Puigdemont / Míriam Nogueras', era: '2023–2026 Congreso', pos: 'Centre-right', score: 6.3, tags: 'Catalan independence, Liberal conservatism', bloc: 'Regional Right', color: '#00c3b2' },
+      { id: 'PP', short: 'PP', name: "Partido Popular (People's Party)", leader: 'Alberto Núñez Feijóo', era: '2023–2026 Congreso', pos: 'Centre-right to Right-wing', score: 7.1, tags: 'Conservatism, Christian democracy, Economic liberalism, Spanish unionism', bloc: 'Right bloc', color: '#0056a3' },
+      { id: 'VOX', short: 'Vox', name: 'Vox', leader: 'Santiago Abascal', era: '2023–2026 Congreso', pos: 'Right-wing to Far-right', score: 8.9, tags: 'Spanish ultranationalism, National conservatism, Right-wing populism', bloc: 'Right bloc', color: '#63be21' },
+      { id: 'SALF', short: 'SALF', name: 'Se Acabó la Fiesta (SALF)', leader: 'Alvise Pérez', era: '2026 Polls', pos: 'Far-right', score: 9.2, tags: 'Anti-establishment populism, Anti-corruption, Right-wing populism', bloc: 'Right bloc', color: '#78350f' },
     ],
   };
 
@@ -1309,7 +1316,7 @@
     israel: '<rect width="30" height="20" fill="#fff"/><rect y="2" width="30" height="3" fill="#0038b8"/><rect y="15" width="30" height="3" fill="#0038b8"/><polygon points="15,6.2 18.2,11.8 11.8,11.8" fill="none" stroke="#0038b8" stroke-width="1.1"/><polygon points="15,13.8 18.2,8.2 11.8,8.2" fill="none" stroke="#0038b8" stroke-width="1.1"/>',
     canada: '<rect width="7.5" height="20" fill="#d80621"/><rect x="7.5" width="15" height="20" fill="#fff"/><rect x="22.5" width="7.5" height="20" fill="#d80621"/><path d="M15,4.5 L16.3,8 L19.2,7.5 L17.4,10.5 L19.5,12 L16,12.5 L16,16 L14,16 L14,12.5 L10.5,12 L12.6,10.5 L10.8,7.5 L13.7,8 Z" fill="#d80621"/>',
     italy: '<rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/>',
-    russia: '<rect width="30" height="6.7" fill="#fff"/><rect y="6.7" width="30" height="6.7" fill="#0039a6"/><rect y="13.3" width="30" height="6.7" fill="#d52b1e"/>',
+    spain: '<rect width="30" height="5" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/><rect y="15" width="30" height="5" fill="#AA151B"/><rect x="6" y="7.2" width="2.8" height="5.6" rx="0.8" fill="#AA151B"/>',
   };
   ES.flag = function (id, h = 18) {
     const s = FLAGS[id];
@@ -1333,7 +1340,7 @@
     israel: 'Israel',
     canada: 'Canada',
     italy: 'Italy',
-    russia: 'Russia',
+    spain: 'Spain',
   };
 
   ES.openIdeologyModal = function (initialCid, onUpdate) {
