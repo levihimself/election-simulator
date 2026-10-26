@@ -146,20 +146,22 @@
 
   // Pre-generate 577 deterministic constituencies across French regions
   const REGIONS_577 = [
-    { name: 'Île-de-France', seats: 97, bias: { left: 1.28, centre: 1.22, right: 0.92, farright: 0.62, other: 0.5 } },
-    { name: 'Auvergne-Rhône-Alpes', seats: 69, bias: { left: 0.95, centre: 1.02, right: 1.28, farright: 0.96, other: 0.7 } },
-    { name: 'Hauts-de-France', seats: 50, bias: { left: 0.92, centre: 0.82, right: 0.88, farright: 1.38, other: 0.6 } },
-    { name: 'Nouvelle-Aquitaine', seats: 49, bias: { left: 1.12, centre: 1.05, right: 0.85, farright: 0.96, other: 1.15 } },
-    { name: 'Occitanie', seats: 49, bias: { left: 1.14, centre: 0.86, right: 0.80, farright: 1.22, other: 0.95 } },
-    { name: 'Grand Est', seats: 49, bias: { left: 0.78, centre: 0.96, right: 1.12, farright: 1.28, other: 0.85 } },
-    { name: "Provence-Alpes-Côte d'Azur", seats: 42, bias: { left: 0.82, centre: 0.84, right: 1.08, farright: 1.44, other: 0.6 } },
-    { name: 'Pays de la Loire', seats: 30, bias: { left: 1.02, centre: 1.28, right: 1.05, farright: 0.78, other: 0.6 } },
-    { name: 'Normandie', seats: 28, bias: { left: 0.98, centre: 1.04, right: 0.92, farright: 1.12, other: 0.6 } },
-    { name: 'Bretagne', seats: 27, bias: { left: 1.18, centre: 1.26, right: 0.85, farright: 0.68, other: 1.65 } },
-    { name: 'Bourgogne-Franche-Comté', seats: 23, bias: { left: 0.88, centre: 0.92, right: 1.10, farright: 1.22, other: 0.6 } },
-    { name: 'Centre-Val de Loire', seats: 22, bias: { left: 0.90, centre: 1.04, right: 1.02, farright: 1.12, other: 0.6 } },
-    { name: 'Corse & Outre-Mer / Étranger', seats: 42, bias: { left: 1.18, centre: 0.94, right: 0.85, farright: 0.82, other: 2.85 } },
+    { id: 'FR-11', code: 'IDF', name: 'Île-de-France', seats: 97, bias: { left: 1.28, centre: 1.22, right: 0.92, farright: 0.62, other: 0.5 } },
+    { id: 'FR-84', code: 'ARA', name: 'Auvergne-Rhône-Alpes', seats: 69, bias: { left: 0.95, centre: 1.02, right: 1.28, farright: 0.96, other: 0.7 } },
+    { id: 'FR-32', code: 'HDF', name: 'Hauts-de-France', seats: 50, bias: { left: 0.92, centre: 0.82, right: 0.88, farright: 1.38, other: 0.6 } },
+    { id: 'FR-75', code: 'NAQ', name: 'Nouvelle-Aquitaine', seats: 49, bias: { left: 1.12, centre: 1.05, right: 0.85, farright: 0.96, other: 1.15 } },
+    { id: 'FR-76', code: 'OCC', name: 'Occitanie', seats: 49, bias: { left: 1.14, centre: 0.86, right: 0.80, farright: 1.22, other: 0.95 } },
+    { id: 'FR-44', code: 'GES', name: 'Grand Est', seats: 49, bias: { left: 0.78, centre: 0.96, right: 1.12, farright: 1.28, other: 0.85 } },
+    { id: 'FR-93', code: 'PAC', name: "Provence-Alpes-Côte d'Azur", seats: 42, bias: { left: 0.82, centre: 0.84, right: 1.08, farright: 1.44, other: 0.6 } },
+    { id: 'FR-52', code: 'PDL', name: 'Pays de la Loire', seats: 30, bias: { left: 1.02, centre: 1.28, right: 1.05, farright: 0.78, other: 0.6 } },
+    { id: 'FR-28', code: 'NOR', name: 'Normandie', seats: 28, bias: { left: 0.98, centre: 1.04, right: 0.92, farright: 1.12, other: 0.6 } },
+    { id: 'FR-53', code: 'BRE', name: 'Bretagne', seats: 27, bias: { left: 1.18, centre: 1.26, right: 0.85, farright: 0.68, other: 1.65 } },
+    { id: 'FR-27', code: 'BFC', name: 'Bourgogne-Franche-Comté', seats: 23, bias: { left: 0.88, centre: 0.92, right: 1.10, farright: 1.22, other: 0.6 } },
+    { id: 'FR-24', code: 'CVL', name: 'Centre-Val de Loire', seats: 22, bias: { left: 0.90, centre: 1.04, right: 1.02, farright: 1.12, other: 0.6 } },
+    { id: 'FR-94', code: 'COR', name: 'Corse & Outre-Mer / Étranger', seats: 42, bias: { left: 1.18, centre: 0.94, right: 0.85, farright: 0.82, other: 2.85 } },
   ];
+  const REG_MAP = {};
+  REGIONS_577.forEach((r) => (REG_MAP[r.id] = r));
 
   const CONSTITUENCIES = (function buildConstituencies() {
     const rnd = rng('france-leg-577-v3');
@@ -208,6 +210,7 @@
 
         list.push({
           id: cid++,
+          regId: reg.id,
           region: reg.name,
           num: i + 1,
           mult,
@@ -226,6 +229,7 @@
     const nat = normalize(legState.votes, 100);
     const turnout = Math.max(40, Math.min(90, +legState.turnout || 66.5));
     const repFront = Math.max(0, Math.min(100, +legState.repFront || 0));
+    const regOverrides = legState.regOverrides || {};
 
     // Precompute cumulative slot probabilities for alliance nominations
     function makeSlotPicker(ids) {
@@ -245,6 +249,11 @@
     const r1Seats = {};
     const r2Seats = {};
     const totalSeats = {};
+    const regSeats = {};
+    REGIONS_577.forEach((r) => {
+      regSeats[r.id] = {};
+      LEG_PARTIES.forEach((p) => (regSeats[r.id][p.id] = 0));
+    });
     LEG_PARTIES.forEach((p) => { r1Seats[p.id] = 0; r2Seats[p.id] = 0; totalSeats[p.id] = 0; });
 
     let countR1Wins = 0;
@@ -259,8 +268,13 @@
     CONSTITUENCIES.forEach((c) => {
       // 1. Raw local party support
       const raw = {};
+      const forcedParty = regOverrides[c.regId];
       LEG_PARTIES.forEach((p) => {
-        raw[p.id] = (nat[p.id] || 0) * c.mult[p.id];
+        let boost = 1.0;
+        if (forcedParty) {
+          boost = p.id === forcedParty ? 2.4 : 0.65;
+        }
+        raw[p.id] = (nat[p.id] || 0) * c.mult[p.id] * boost;
       });
 
       // 2. Apply Round 1 pre-electoral alliances (joint single candidate per constituency)
@@ -302,6 +316,7 @@
         const winId = rankedR1[0][0];
         r1Seats[winId]++;
         totalSeats[winId]++;
+        regSeats[c.regId][winId]++;
         countR1Wins++;
         return;
       }
@@ -396,6 +411,7 @@
       const winId = ES.util.argmax(r2Votes);
       r2Seats[winId]++;
       totalSeats[winId]++;
+      regSeats[c.regId][winId]++;
     });
 
     return {
@@ -403,6 +419,7 @@
       r1Seats,
       r2Seats,
       totalSeats,
+      regSeats,
       countR1Wins,
       countDuels,
       countTriangulars,
@@ -437,6 +454,8 @@
         customTransfers: {}, // key: `${idA}|${idB}|${fromId}` -> [toA, toB]
         r2Override: false,
         r2SliderA: 50.0,
+        mapRound: 'r2', // 'r1' | 'r2'
+        regWinnerOverride: {}, // regId -> candId
       },
       leg: {
         votes: legVotes,
@@ -445,6 +464,8 @@
         rn_udr: true,
         turnout: 66.7,
         repFront: 75,
+        brush: 'cycle',
+        regOverrides: {}, // regId -> partyId
       },
     };
   }
@@ -600,11 +621,32 @@
     });
     r1Card.body.appendChild(sliderCtrl.el);
 
-    // --- Right Column: Hero Runoff Cards, Duel Bar & Semicircle, Round 1 Chart, Vote-Transfer Matrix ---
+    // --- Right Column: Hero Runoff Cards, Regional Map, Round 1 Chart, Vote-Transfer Matrix ---
     const heroCard = ui.card('Presidential Outcome & Second Round Runoff');
     L.right.appendChild(heroCard.card);
     const heroBody = el('div');
     heroCard.body.appendChild(heroBody);
+
+    // Interactive France Regional Map for Presidential Election
+    const presMapHeader = ui.segmented(
+      [
+        { value: 'r1', label: 'Round 1 Leader' },
+        { value: 'r2', label: 'Round 2 Runoff Winner' },
+      ],
+      state.pres.mapRound,
+      (v) => {
+        state.pres.mapRound = v;
+        updatePres();
+      }
+    );
+    const presMapCard = ui.card('Interactive Map of French Regions (Click a Region to Flip Winner)', '', presMapHeader);
+    L.right.appendChild(presMapCard.card);
+    const presMapGrid = el('div', { class: 'grid2', style: { alignItems: 'center' } });
+    const presMapWrap = el('div', { class: 'map-wrap' });
+    const presMapSide = el('div');
+    presMapGrid.appendChild(presMapWrap);
+    presMapGrid.appendChild(presMapSide);
+    presMapCard.body.appendChild(presMapGrid);
 
     const r1ChartCard = ui.card('First Round (Premier Tour) – Qualification for Runoff');
     L.right.appendChild(r1ChartCard.card);
@@ -615,6 +657,27 @@
     L.right.appendChild(matrixCard.card);
     const matrixBody = el('div');
     matrixCard.body.appendChild(matrixBody);
+
+    const presTip = ui.tooltip();
+    let presRegPaths = null;
+    if (window.GEO_FR && window.GEO_FR.features) {
+      const W = 440, H = 420;
+      const svg = d3.select(presMapWrap).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+      const proj = d3.geoMercator().fitExtent([[14, 14], [W - 14, H - 14]], window.GEO_FR);
+      const path = d3.geoPath(proj);
+      presRegPaths = svg.append('g')
+        .selectAll('path')
+        .data(window.GEO_FR.features)
+        .join('path')
+        .attr('class', 'unit')
+        .attr('d', path);
+      svg.append('g')
+        .selectAll('text')
+        .data(window.GEO_FR.features)
+        .join('text')
+        .attr('transform', (d) => `translate(${path.centroid(d)})`)
+        .text((d) => (REG_MAP[d.properties.id] || {}).code || d.properties.code);
+    }
 
     let lastPairKey = '';
 
@@ -792,7 +855,96 @@
       });
       r1ChartBody.appendChild(barsWrap);
 
-      // 3. Rebuild Transfer Matrix UI when finalists change or on update
+      // 3. Update Presidential Regional Map
+      if (presRegPaths) {
+        const regData = {};
+        REGIONS_577.forEach((reg) => {
+          // Compute regional R1 & R2 shares using regional bloc bias
+          const regR1Raw = {};
+          ranked.forEach((c) => {
+            const meta = PRES_CANDIDATES.find((x) => x.id === c.id);
+            const bias = reg.bias[meta.bloc] || 1.0;
+            regR1Raw[c.id] = c.r1 * bias;
+          });
+          const regR1 = normalize(regR1Raw, 100);
+          const regR1Ranked = Object.entries(regR1)
+            .map(([id, pct]) => ({ id, pct, cand: ranked.find((x) => x.id === id) }))
+            .sort((a, b) => b.pct - a.pct);
+
+          const metaA = PRES_CANDIDATES.find((x) => x.id === top1.id);
+          const metaB = PRES_CANDIDATES.find((x) => x.id === top2.id);
+          const wA = r2PctA * (reg.bias[metaA.bloc] || 1.0);
+          const wB = r2PctB * (reg.bias[metaB.bloc] || 1.0);
+          const regR2A = wA + wB > 0 ? (wA / (wA + wB)) * 100 : 50;
+          const regR2B = 100 - regR2A;
+          const r2Win = regR2A >= regR2B ? top1 : top2;
+
+          let shownWinner = state.pres.mapRound === 'r1' ? regR1Ranked[0].cand : r2Win;
+          const ovId = state.pres.regWinnerOverride[reg.id];
+          if (ovId) {
+            const found = ranked.find((x) => x.id === ovId);
+            if (found) shownWinner = found;
+          }
+          regData[reg.id] = { reg, regR1Ranked, regR2A, regR2B, r2Win, shownWinner };
+        });
+
+        presRegPaths
+          .attr('fill', (d) => (regData[d.properties.id] ? regData[d.properties.id].shownWinner.color : '#334155'))
+          .classed('override', (d) => !!state.pres.regWinnerOverride[d.properties.id])
+          .on('click', (e, d) => {
+            const rid = d.properties.id;
+            const pool = state.pres.mapRound === 'r1' ? ranked.slice(0, 4) : [top1, top2];
+            const cur = regData[rid].shownWinner.id;
+            const idx = pool.findIndex((x) => x.id === cur);
+            const next = pool[(idx + 1) % pool.length];
+            state.pres.regWinnerOverride[rid] = next.id;
+            if (ES.sfx) ES.sfx.click();
+            updatePres();
+          })
+          .on('mouseenter', (e, d) => {
+            const info = regData[d.properties.id];
+            if (!info) return;
+            const r1Rows = info.regR1Ranked.slice(0, 4)
+              .map((x) => `<tr><td><span style="color:${x.cand.color}">■</span> ${x.cand.name}</td><td style="text-align:right"><b>${fmt(x.pct)}%</b></td></tr>`)
+              .join('');
+            presTip.show(
+              e,
+              `<b>${info.reg.name}</b><br>` +
+              `<span class="muted">R2 Runoff:</span> <b style="color:${top1.color}">${top1.name.split(' ').pop()} ${fmt(info.regR2A)}%</b> vs <b style="color:${top2.color}">${top2.name.split(' ').pop()} ${fmt(info.regR2B)}%</b>` +
+              `<table>${r1Rows}</table>` +
+              `<div class="muted small">Click region to cycle winner</div>`
+            );
+          })
+          .on('mousemove', (e) => presTip.move(e))
+          .on('mouseleave', () => presTip.hide());
+
+        presMapSide.innerHTML = '';
+        const tblRows = REGIONS_577.map((reg) => {
+          const info = regData[reg.id];
+          const w = info.shownWinner;
+          const pct = state.pres.mapRound === 'r1'
+            ? (info.regR1Ranked.find((x) => x.id === w.id)?.pct || info.regR1Ranked[0].pct)
+            : (w.id === top1.id ? info.regR2A : info.regR2B);
+          return el('tr', {
+            style: { cursor: 'pointer' },
+            onclick: () => {
+              const pool = state.pres.mapRound === 'r1' ? ranked.slice(0, 4) : [top1, top2];
+              const idx = pool.findIndex((x) => x.id === w.id);
+              state.pres.regWinnerOverride[reg.id] = pool[(idx + 1) % pool.length].id;
+              updatePres();
+            },
+          }, [
+            el('td', {}, [el('span', { class: 'swatch', style: { background: w.color } }), el('span', { text: `${reg.code} · ${reg.name}` })]),
+            el('td', { class: 'num', html: `<b style="color:${w.color}">${w.name.split(' ').pop()}</b> ${fmt(pct)}%` }),
+          ]);
+        });
+        presMapSide.appendChild(el('table', { class: 'results' }, [
+          el('thead', {}, el('tr', {}, [el('th', { text: 'Region (Click to flip)' }), el('th', { text: state.pres.mapRound === 'r1' ? 'R1 Leader' : 'R2 Winner' })])),
+          el('tbody', {}, tblRows),
+        ]));
+      }
+
+      // 4. Rebuild Transfer Matrix UI when finalists change or on update
       if (pairKey !== lastPairKey || !matrixBody.hasChildNodes()) {
         lastPairKey = pairKey;
         buildTransferMatrix( ranked, top1, top2, transfers );
@@ -1065,7 +1217,7 @@
     });
     slidersCard.body.appendChild(legSliderCtrl.el);
 
-    // --- Right Column: Hemicycle + Seat Bar, Two-Round Breakdown KPIs, Detailed Table, Coalition Builder ---
+    // --- Right Column: Hemicycle + Seat Bar, Regional Map, Detailed Table, Coalition Builder ---
     const hcCard = ui.card('Assemblée nationale – 577 Seats (289 for Absolute Majority)');
     L.right.appendChild(hcCard.card);
     const kpiBox = el('div', { class: 'fr-kpis' });
@@ -1074,6 +1226,68 @@
     hcCard.body.appendChild(kpiBox);
     hcCard.body.appendChild(hcBox);
     hcCard.body.appendChild(barBox);
+
+    // Interactive Regional Map for Legislative Elections
+    const legMapCard = ui.card('13 Regions & 577 Constituencies Map (Click a Region to Paint Leading Party)');
+    L.right.appendChild(legMapCard.card);
+    const legToolbar = el('div', { class: 'map-toolbar' });
+    const legBrushList = [
+      { id: 'cycle', label: '🔄 Cycle Leading Party', color: '#5b8cff' },
+      { id: 'rn', label: 'RN', color: '#3b4cca' },
+      { id: 'lfi', label: 'LFI', color: '#cc2443' },
+      { id: 'ps', label: 'PS–PP', color: '#ec4899' },
+      { id: 'ren', label: 'Renaissance', color: '#f59e0b' },
+      { id: 'hor', label: 'Horizons', color: '#38bdf8' },
+      { id: 'lr', label: 'LR', color: '#2563eb' },
+      { id: 'eco', label: 'Écologistes', color: '#22c55e' },
+      { id: 'reset', label: '↺ Clear Overrides', color: '#ffffff' },
+    ];
+    legBrushList.forEach((b) => {
+      const chip = el('button', {
+        class: 'paint-chip' + (state.leg.brush === b.id ? ' active' : ''),
+        style: { '--c': b.color },
+      }, [b.id !== 'cycle' && b.id !== 'reset' ? el('span', { class: 'swatch', style: { background: b.color } }) : null, b.label]);
+      chip.addEventListener('click', () => {
+        if (b.id === 'reset') {
+          state.leg.regOverrides = {};
+          updateLeg();
+          return;
+        }
+        state.leg.brush = b.id;
+        legToolbar.querySelectorAll('.paint-chip').forEach((x) => x.classList.remove('active'));
+        chip.classList.add('active');
+      });
+      legToolbar.appendChild(chip);
+    });
+    legMapCard.body.appendChild(legToolbar);
+
+    const legMapGrid = el('div', { class: 'grid2', style: { alignItems: 'center' } });
+    const legMapWrap = el('div', { class: 'map-wrap' });
+    const legMapSide = el('div');
+    legMapGrid.appendChild(legMapWrap);
+    legMapGrid.appendChild(legMapSide);
+    legMapCard.body.appendChild(legMapGrid);
+
+    const legTip = ui.tooltip();
+    let legRegPaths = null;
+    if (window.GEO_FR && window.GEO_FR.features) {
+      const W = 440, H = 420;
+      const svg = d3.select(legMapWrap).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+      const proj = d3.geoMercator().fitExtent([[14, 14], [W - 14, H - 14]], window.GEO_FR);
+      const path = d3.geoPath(proj);
+      legRegPaths = svg.append('g')
+        .selectAll('path')
+        .data(window.GEO_FR.features)
+        .join('path')
+        .attr('class', 'unit')
+        .attr('d', path);
+      svg.append('g')
+        .selectAll('text')
+        .data(window.GEO_FR.features)
+        .join('text')
+        .attr('transform', (d) => `translate(${path.centroid(d)})`)
+        .text((d) => (REG_MAP[d.properties.id] || {}).code || d.properties.code);
+    }
 
     const coalCard = ui.card('Coalition & Bloc Majority Builder (289 Needed)');
     L.right.appendChild(coalCard.card);
@@ -1146,6 +1360,80 @@
       else if (centreSeats >= 289) majText += `<span class="ok">Ensemble wins an absolute majority (${centreSeats} seats).</span>`;
       else majText += `<span class="warn">Hung Parliament (no single bloc reaches 289 seats — coalition required).</span>`;
       barBox.appendChild(el('div', { style: { marginTop: '8px' } }, ui.note(majText, frSeats >= 289 || leftSeats >= 289 || centreSeats >= 289 ? 'info' : 'warn')));
+
+      // Update Legislative Regional Map
+      if (legRegPaths) {
+        const regLead = {};
+        REGIONS_577.forEach((reg) => {
+          const rs = sim.regSeats[reg.id] || {};
+          let bestId = 'rn', maxS = -1;
+          LEG_PARTIES.forEach((p) => {
+            if ((rs[p.id] || 0) > maxS) {
+              maxS = rs[p.id] || 0;
+              bestId = p.id;
+            }
+          });
+          const party = LEG_PARTIES.find((p) => p.id === bestId) || LEG_PARTIES[0];
+          regLead[reg.id] = { reg, party, seats: maxS, allSeats: rs };
+        });
+
+        const cycleOrder = ['rn', 'lfi', 'ps', 'ren', 'hor', 'lr', 'eco'];
+        legRegPaths
+          .attr('fill', (d) => (regLead[d.properties.id] ? regLead[d.properties.id].party.color : '#334155'))
+          .classed('override', (d) => !!state.leg.regOverrides[d.properties.id])
+          .on('click', (e, d) => {
+            const rid = d.properties.id;
+            if (state.leg.brush === 'cycle') {
+              const cur = state.leg.regOverrides[rid] || regLead[rid].party.id;
+              const idx = cycleOrder.indexOf(cur);
+              state.leg.regOverrides[rid] = cycleOrder[(idx + 1) % cycleOrder.length];
+            } else {
+              state.leg.regOverrides[rid] = state.leg.brush;
+            }
+            if (ES.sfx) ES.sfx.click();
+            updateLeg();
+          })
+          .on('mouseenter', (e, d) => {
+            const info = regLead[d.properties.id];
+            if (!info) return;
+            const sRows = LEG_PARTIES.filter((p) => (info.allSeats[p.id] || 0) > 0)
+              .sort((a, b) => (info.allSeats[b.id] || 0) - (info.allSeats[a.id] || 0))
+              .map((p) => `<tr><td><span style="color:${p.color}">■</span> ${p.short}</td><td style="text-align:right"><b>${info.allSeats[p.id]} seats</b></td></tr>`)
+              .join('');
+            legTip.show(
+              e,
+              `<b>${info.reg.name}</b> (${info.reg.seats} seats)<table>${sRows}</table><div class="muted small">Click to paint / boost leading party</div>`
+            );
+          })
+          .on('mousemove', (e) => legTip.move(e))
+          .on('mouseleave', () => legTip.hide());
+
+        legMapSide.innerHTML = '';
+        const stRows = REGIONS_577.map((reg) => {
+          const info = regLead[reg.id];
+          return el('tr', {
+            style: { cursor: 'pointer' },
+            onclick: () => {
+              if (state.leg.brush === 'cycle') {
+                const cur = state.leg.regOverrides[reg.id] || info.party.id;
+                const idx = cycleOrder.indexOf(cur);
+                state.leg.regOverrides[reg.id] = cycleOrder[(idx + 1) % cycleOrder.length];
+              } else {
+                state.leg.regOverrides[reg.id] = state.leg.brush;
+              }
+              updateLeg();
+            },
+          }, [
+            el('td', {}, [el('span', { class: 'swatch', style: { background: info.party.color } }), el('span', { text: `${reg.code} · ${reg.name}` })]),
+            el('td', { class: 'num muted', text: `${reg.seats}` }),
+            el('td', { class: 'num', html: `<b style="color:${info.party.color}">${info.party.short}</b> (${info.seats})` }),
+          ]);
+        });
+        legMapSide.appendChild(el('table', { class: 'results' }, [
+          el('thead', {}, el('tr', {}, [el('th', { text: 'Region (Click)' }), el('th', { text: 'Seats' }), el('th', { text: '1st Party' })])),
+          el('tbody', {}, stRows),
+        ]));
+      }
 
       // Coalition builder
       coalBox.innerHTML = '';

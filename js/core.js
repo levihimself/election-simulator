@@ -210,6 +210,7 @@
   }
   methods.dhondt = (votes, seats) => highestAverages(votes, seats, (n) => n + 1);
   methods.sainteLague = (votes, seats) => highestAverages(votes, seats, (n) => 2 * n + 1);
+  methods.hare = (votes, seats) => methods.largestRemainder(votes, seats, 'hare');
   methods.largestRemainder = function (votes, seats, quota = 'hare') {
     const total = util.sum(votes);
     const res = {};
@@ -772,6 +773,10 @@
     eu: '<rect width="30" height="20" fill="#003399"/>' + Array.from({ length: 12 }, (_, i) => `<circle cx="${(15 + 6 * Math.cos((i * Math.PI) / 6)).toFixed(2)}" cy="${(10 + 6 * Math.sin((i * Math.PI) / 6)).toFixed(2)}" r="0.9" fill="#FFCC00"/>`).join(''),
     uk: '<rect width="30" height="20" fill="#012169"/><path d="M0,0 L30,20 M30,0 L0,20" stroke="#fff" stroke-width="4"/><path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" stroke-width="1.5"/><path d="M15,0 V20 M0,10 H30" stroke="#fff" stroke-width="6"/><path d="M15,0 V20 M0,10 H30" stroke="#C8102E" stroke-width="3.5"/>',
     usa: Array.from({ length: 7 }, (_, i) => `<rect y="${(i * 20) / 6.5}" width="30" height="${20 / 13}" fill="#B22234"/>`).join('') + '<rect width="13" height="10.8" fill="#3C3B6E"/>',
+    israel: '<rect width="30" height="20" fill="#fff"/><rect y="2" width="30" height="3" fill="#0038b8"/><rect y="15" width="30" height="3" fill="#0038b8"/><polygon points="15,6.2 18.2,11.8 11.8,11.8" fill="none" stroke="#0038b8" stroke-width="1.1"/><polygon points="15,13.8 18.2,8.2 11.8,8.2" fill="none" stroke="#0038b8" stroke-width="1.1"/>',
+    canada: '<rect width="7.5" height="20" fill="#d80621"/><rect x="7.5" width="15" height="20" fill="#fff"/><rect x="22.5" width="7.5" height="20" fill="#d80621"/><path d="M15,4.5 L16.3,8 L19.2,7.5 L17.4,10.5 L19.5,12 L16,12.5 L16,16 L14,16 L14,12.5 L10.5,12 L12.6,10.5 L10.8,7.5 L13.7,8 Z" fill="#d80621"/>',
+    italy: '<rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/>',
+    russia: '<rect width="30" height="6.7" fill="#fff"/><rect y="6.7" width="30" height="6.7" fill="#0039a6"/><rect y="13.3" width="30" height="6.7" fill="#d52b1e"/>',
   };
   ES.flag = function (id, h = 18) {
     const s = FLAGS[id];
