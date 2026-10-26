@@ -244,6 +244,414 @@
   };
 
   /* --------------------------------------------------------------------- */
+  /* Political Spectrum & Ideology Database (11 Countries)                  */
+  /* --------------------------------------------------------------------- */
+  const DEFAULT_IDEOLOGY_DB = {
+    hungary: [
+      { id: 'MSZMP', short: 'MSZMP', name: "MSZMP (Workers' Party)", leader: 'Gyula Thürmer', era: '1990', pos: 'Far-left', score: 1.0, tags: 'Communism, Marxism-Leninism', bloc: 'Extra-parliamentary', color: '#990000' },
+      { id: 'MSZP', short: 'MSZP', name: 'MSZP (Hungarian Socialist Party)', leader: 'Gyula Horn / Péter Medgyessy / Ferenc Gyurcsány', era: '1990–2018', pos: 'Centre-left', score: 3.2, tags: 'Social democracy, Pro-Europeanism', bloc: 'Left-liberal bloc', color: '#e11d48' },
+      { id: 'SZDSZ', short: 'SZDSZ', name: 'SZDSZ (Alliance of Free Democrats)', leader: 'János Kis / Iván Pető / Gábor Kuncze', era: '1990–2006', pos: 'Centre', score: 4.8, tags: 'Social liberalism, Economic liberalism', bloc: 'Left-liberal bloc', color: '#38bdf8' },
+      { id: 'FIDESZ_1990', short: 'Fidesz (90–94)', name: 'Fidesz (Alliance of Young Democrats)', leader: 'Viktor Orbán', era: '1990–1994', pos: 'Centre', score: 5.0, tags: 'Liberalism, Youth politics, Anti-communism', bloc: 'Early liberal era', color: '#fb923c' },
+      { id: 'FIDESZ', short: 'Fidesz–KDNP', name: 'Fidesz – Hungarian Civic Alliance & KDNP', leader: 'Viktor Orbán', era: '1998–2026 Sept', pos: 'Right-wing to Far-right', score: 8.2, tags: 'National conservatism, Right-wing populism, Christian democracy', bloc: 'Governing right bloc', color: '#ff6a00' },
+      { id: 'MDF', short: 'MDF', name: 'MDF (Hungarian Democratic Forum)', leader: 'József Antall / Péter Boross / Ibolya Dávid', era: '1990–2010', pos: 'Centre-right', score: 6.5, tags: 'National conservatism, Christian democracy, Liberal conservatism', bloc: 'Conservative bloc', color: '#15803d' },
+      { id: 'KDNP', short: 'KDNP', name: "KDNP (Christian Democratic People's Party)", leader: 'László Surján', era: '1990–1994', pos: 'Centre-right to Right-wing', score: 7.2, tags: 'Christian democracy, Social conservatism', bloc: 'Conservative bloc', color: '#ca8a04' },
+      { id: 'FKGP', short: 'FKGP', name: "FKGP (Independent Smallholders' Party)", leader: 'József Torgyán', era: '1990–1998', pos: 'Right-wing', score: 7.5, tags: 'Agrarianism, National conservatism, Social conservatism', bloc: 'Conservative bloc', color: '#65a30d' },
+      { id: 'MIEP', short: 'MIÉP', name: 'MIÉP (Hungarian Justice and Life Party)', leader: 'István Csurka', era: '1994–2006', pos: 'Far-right', score: 9.5, tags: 'Hungarian ultranationalism, Radical right', bloc: 'Far-right', color: '#78350f' },
+      { id: 'LMP', short: 'LMP', name: "LMP – Hungary's Green Party", leader: 'András Schiffer / Bernadett Szél', era: '2010–2018', pos: 'Centre-left', score: 3.8, tags: 'Green politics, Eco-politics, Direct democracy', bloc: 'Green opposition', color: '#4ade80' },
+      { id: 'JOBBIK_EARLY', short: 'Jobbik (10–14)', name: 'Jobbik (Movement for a Better Hungary)', leader: 'Gábor Vona', era: '2010–2014', pos: 'Far-right', score: 9.2, tags: 'Hungarian nationalism, Radical right', bloc: 'Far-right era', color: '#4b5563' },
+      { id: 'JOBBIK', short: 'Jobbik (2018)', name: "Jobbik (People's Party shift)", leader: 'Gábor Vona', era: '2018', pos: 'Centre-right to Right-wing', score: 7.0, tags: "Conservative people's party, Patriotism", bloc: 'Moderate shift', color: '#1f9d72' },
+      { id: 'UNITY', short: 'Összefogás', name: 'Összefogás (MSZP–E14–DK–PM–MLP)', leader: 'Attila Mesterházy', era: '2014', pos: 'Centre-left', score: 3.4, tags: 'Social democracy, Social liberalism, Green politics', bloc: 'Joint opposition', color: '#ef4444' },
+      { id: 'DK', short: 'DK', name: 'DK (Democratic Coalition)', leader: 'Ferenc Gyurcsány / Klára Dobrev', era: '2018–2026 Sept', pos: 'Centre-left', score: 3.5, tags: 'Social liberalism, Social democracy, European federalism', bloc: 'Opposition', color: '#2563eb' },
+      { id: 'MOMENTUM', short: 'Momentum', name: 'Momentum Movement', leader: 'András Fekete-Győr', era: '2018', pos: 'Centre', score: 5.0, tags: 'Centrism, Liberalism, Pro-Europeanism', bloc: 'Liberal opposition', color: '#a855f7' },
+      { id: 'MKKP', short: 'MKKP', name: 'MKKP (Hungarian Two-Tailed Dog Party)', leader: 'Gergely Kovács', era: '2018–2026 Sept', pos: 'Centre / Satirical', score: 4.5, tags: 'Joke party, Political satire, Grassroots anti-corruption', bloc: 'Non-aligned', color: '#9ca3af' },
+      { id: 'EM', short: 'Egységben', name: 'Egységben Magyarországért (United Opposition)', leader: 'Péter Márki-Zay', era: '2022', pos: 'Big tent', score: 4.8, tags: 'Anti-Orbán big tent, Pro-Europeanism, Rule of law', bloc: 'United opposition', color: '#0284c7' },
+      { id: 'MEMO', short: 'MEMO', name: 'Megoldás Mozgalom (Solution Movement)', leader: 'György Gattyán', era: '2022', pos: 'Centre', score: 5.5, tags: 'Technocracy, Digitalization', bloc: 'Extra-parliamentary', color: '#eab308' },
+      { id: 'MIHAZANK', short: 'Mi Hazánk', name: 'Mi Hazánk Mozgalom (Our Homeland Movement)', leader: 'László Toroczkai', era: '2022–2026 Sept', pos: 'Far-right', score: 9.5, tags: 'Hungarian ultranationalism, Hard Euroscepticism', bloc: 'Far-right', color: '#65a30d' },
+      { id: 'TISZA', short: 'TISZA', name: 'TISZA (Respect and Freedom Party)', leader: 'Péter Magyar', era: '2026 Apr & Sept', pos: 'Centre-right / Big tent', score: 5.8, tags: 'Civic conservatism, Centrism, Anti-corruption, Pro-Europeanism', bloc: 'Governing party 2026', color: '#00b4d8' },
+      { id: 'MNOO', short: 'MNOÖ', name: 'MNOÖ (German Minority List)', leader: 'Imre Ritter', era: '2018–2022', pos: 'Minority / Centre-right', score: 6.0, tags: 'Ethnic German minority representation', bloc: 'Minority seat', color: '#64748b' },
+    ],
+    budapest: [
+      { id: 'karacsony', short: 'Karácsony', name: 'Párbeszéd–Zöldek – DK – MSZP (Mayoral)', leader: 'Gergely Karácsony', era: '2024 Mayoral', pos: 'Centre-left', score: 3.4, tags: 'Green politics, Social democracy, Pro-Europeanism', bloc: 'Mayor', color: '#2eb872' },
+      { id: 'vitezy', short: 'Vitézy', name: 'Vitézy Dáviddal Budapestért – LMP (Mayoral)', leader: 'Dávid Vitézy', era: '2024 Mayoral', pos: 'Centre', score: 5.2, tags: 'Urbanism, Technocracy, Green conservatism', bloc: 'Mayoral candidate', color: '#19a7ce' },
+      { id: 'grundtner', short: 'Grundtner', name: 'Mi Hazánk Mozgalom (Mayoral)', leader: 'András Grundtner', era: '2024 Mayoral', pos: 'Far-right', score: 9.5, tags: 'Hungarian nationalism, National conservatism', bloc: 'Mayoral candidate', color: '#689f38' },
+      { id: 'tisza', short: 'TISZA', name: 'TISZA (Respect & Freedom Party)', leader: 'Péter Magyar', era: '2024 Assembly', pos: 'Centre-right / Big tent', score: 5.8, tags: 'Civic conservatism, Anti-corruption, Pro-Europeanism', bloc: 'Assembly list', color: '#00b4d8' },
+      { id: 'fidesz', short: 'FIDESZ', name: 'FIDESZ–KDNP', leader: 'Alexandra Szentkirályi', era: '2024 Assembly', pos: 'Right-wing', score: 8.2, tags: 'National conservatism, Right-wing populism', bloc: 'Assembly list', color: '#ff6a00' },
+      { id: 'dk', short: 'DK–MSZP–P', name: 'DK–MSZP–Párbeszéd Alliance', leader: 'Gergely Karácsony', era: '2024 Assembly', pos: 'Centre-left', score: 3.4, tags: 'Social democracy, Green politics, Social liberalism', bloc: 'Assembly list', color: '#2eb872' },
+      { id: 'mkkp', short: 'MKKP', name: 'MKKP (Two-Tailed Dog Party)', leader: 'Krisztina Baranyi', era: '2024 Assembly', pos: 'Centre / Satirical', score: 4.5, tags: 'Political satire, Transparency, Grassroots', bloc: 'Assembly list', color: '#9ca3af' },
+      { id: 'vitezy_list', short: 'Vitézy–LMP', name: 'Vitézy Dáviddal Budapestért – LMP', leader: 'Dávid Vitézy', era: '2024 Assembly', pos: 'Centre', score: 5.2, tags: 'Urban policy, Technocracy, Green politics', bloc: 'Assembly list', color: '#19a7ce' },
+      { id: 'mayor_ind', short: 'Mayor', name: 'Mayor of Budapest (Ex-officio)', leader: 'Gergely Karácsony', era: '2024 Assembly', pos: 'Centre-left', score: 3.4, tags: 'Green politics, Social democracy', bloc: 'Mayor seat', color: '#2eb872' },
+    ],
+    eu: [
+      { id: 'LEFT', short: 'The Left', name: 'The Left in the European Parliament (GUE/NGL)', leader: 'Manon Aubry & Martin Schirdewan', era: '2024 EP', pos: 'Left-wing to Far-left', score: 1.8, tags: 'Democratic socialism, Left-wing populism, Soft Euroscepticism', bloc: 'EP Group', color: '#b71c1c' },
+      { id: 'SD', short: 'S&D', name: 'Progressive Alliance of Socialists and Democrats', leader: 'Iratxe García', era: '2024 EP', pos: 'Centre-left', score: 3.3, tags: 'Social democracy, Pro-Europeanism', bloc: 'EP Group', color: '#e53935' },
+      { id: 'GREENS', short: 'Greens/EFA', name: 'Greens / European Free Alliance', leader: 'Terry Reintke & Bas Eickhout', era: '2024 EP', pos: 'Centre-left', score: 3.6, tags: 'Green politics, Regionalism, European federalism', bloc: 'EP Group', color: '#43a047' },
+      { id: 'RENEW', short: 'Renew', name: 'Renew Europe', leader: 'Valérie Hayer', era: '2024 EP', pos: 'Centre', score: 5.0, tags: 'Liberalism, Social liberalism, Pro-Europeanism', bloc: 'EP Group', color: '#fdd835' },
+      { id: 'EPP', short: 'EPP', name: "European People's Party (EPP)", leader: 'Manfred Weber', era: '2024 EP', pos: 'Centre-right', score: 6.4, tags: 'Christian democracy, Liberal conservatism, Pro-Europeanism', bloc: 'EP Group', color: '#2b6cb0' },
+      { id: 'ECR', short: 'ECR', name: 'European Conservatives and Reformists (ECR)', leader: 'Nicola Procaccini & Joachim Brudziński', era: '2024 EP', pos: 'Right-wing', score: 7.8, tags: 'National conservatism, Economic liberalism, Soft Euroscepticism', bloc: 'EP Group', color: '#1976d2' },
+      { id: 'PFE', short: 'PfE', name: 'Patriots for Europe (PfE)', leader: 'Jordan Bardella', era: '2024 EP', pos: 'Right-wing to Far-right', score: 8.6, tags: 'National conservatism, Right-wing populism, Euroscepticism', bloc: 'EP Group', color: '#1e3a8a' },
+      { id: 'ESN', short: 'ESN', name: 'Europe of Sovereign Nations (ESN)', leader: 'René Aust & Stanisław Tyszka', era: '2024 EP', pos: 'Far-right', score: 9.4, tags: 'Ultranationalism, Hard Euroscepticism, Right-wing populism', bloc: 'EP Group', color: '#4a2c2a' },
+      { id: 'NI', short: 'NI', name: 'Non-Inscrits (Non-Attached Members)', leader: 'Unaffiliated', era: '2024 EP', pos: 'Non-aligned / Mixed', score: 5.5, tags: 'Various / Unaffiliated national parties', bloc: 'EP Group', color: '#78909c' },
+    ],
+    germany: [
+      { id: 'LINKE', short: 'Linke', name: 'Die Linke (The Left)', leader: 'Jan van Aken & Ines Schwerdtner', era: '2025 Bundestag', pos: 'Left-wing', score: 2.0, tags: 'Democratic socialism, Anti-capitalism', bloc: 'Opposition', color: '#be3075' },
+      { id: 'BSW', short: 'BSW', name: 'Bündnis Sahra Wagenknecht (BSW)', leader: 'Sahra Wagenknecht', era: '2025 Bundestag', pos: 'Left-conservative', score: 3.0, tags: 'Left-conservatism, Left-wing populism, Economic nationalism', bloc: 'Non-aligned', color: '#7b2cbf' },
+      { id: 'SPD', short: 'SPD', name: 'Social Democratic Party of Germany (SPD)', leader: 'Olaf Scholz / Lars Klingbeil', era: '2025 Bundestag', pos: 'Centre-left', score: 3.6, tags: 'Social democracy, Pro-Europeanism', bloc: 'Centre-left', color: '#e3000f' },
+      { id: 'GRUNE', short: 'Grüne', name: 'Alliance 90 / The Greens (Bündnis 90/Die Grünen)', leader: 'Robert Habeck', era: '2025 Bundestag', pos: 'Centre-left', score: 3.8, tags: 'Green politics, Social liberalism, Pro-Europeanism', bloc: 'Centre-left', color: '#46962b' },
+      { id: 'SSW', short: 'SSW', name: "South Schleswig Voters' Association (SSW)", leader: 'Stefan Seidler', era: '2025 Bundestag', pos: 'Centre-left / Minority', score: 4.4, tags: 'Danish & Frisian minority interests, Social liberalism', bloc: 'Regional minority', color: '#005ca9' },
+      { id: 'FDP', short: 'FDP', name: 'Free Democratic Party (FDP)', leader: 'Christian Lindner', era: '2025 Bundestag', pos: 'Centre to Centre-right', score: 5.8, tags: 'Classical liberalism, Economic liberalism', bloc: 'Liberal', color: '#ffed00' },
+      { id: 'FW', short: 'FW', name: 'Free Voters (Freie Wähler)', leader: 'Hubert Aiwanger', era: '2025 Bundestag', pos: 'Centre-right', score: 6.2, tags: 'Liberal conservatism, Regionalism, Localism', bloc: 'Centre-right', color: '#f59e0b' },
+      { id: 'CDU', short: 'CDU', name: 'Christian Democratic Union (CDU)', leader: 'Friedrich Merz', era: '2025 Bundestag', pos: 'Centre-right', score: 6.5, tags: 'Christian democracy, Liberal conservatism', bloc: 'Union', color: '#3b4a62' },
+      { id: 'CSU', short: 'CSU', name: 'Christian Social Union in Bavaria (CSU)', leader: 'Markus Söder', era: '2025 Bundestag', pos: 'Centre-right', score: 7.0, tags: 'Christian democracy, Bavarian regionalism, Conservatism', bloc: 'Union', color: '#008ac5' },
+      { id: 'AFD', short: 'AfD', name: 'Alternative for Germany (AfD)', leader: 'Alice Weidel', era: '2025 Bundestag', pos: 'Far-right', score: 9.2, tags: 'German nationalism, Right-wing populism, Euroscepticism', bloc: 'Far-right', color: '#009ee0' },
+    ],
+    france: [
+      { id: 'melenchon', short: 'LFI (Pres.)', name: 'La France Insoumise (Presidential)', leader: 'Jean-Luc Mélenchon', era: '2027 Presidential', pos: 'Left-wing to Far-left', score: 1.8, tags: 'Democratic socialism, Eco-socialism, Left-wing populism', bloc: 'Left', color: '#cc2443' },
+      { id: 'roussel', short: 'PCF (Pres.)', name: 'Parti Communiste Français (Presidential)', leader: 'Fabien Roussel', era: '2027 Presidential', pos: 'Left-wing to Far-left', score: 2.0, tags: 'Communism, Democratic socialism', bloc: 'Left', color: '#dd0000' },
+      { id: 'tondelier', short: 'Écologistes (Pres.)', name: 'Les Écologistes – EELV (Presidential)', leader: 'Marine Tondelier', era: '2027 Presidential', pos: 'Centre-left to Left-wing', score: 2.8, tags: 'Green politics, Alter-globalization', bloc: 'Left', color: '#00c000' },
+      { id: 'glucksmann', short: 'PS–PP (Pres.)', name: 'Place Publique / Parti Socialiste (Presidential)', leader: 'Raphaël Glucksmann', era: '2027 Presidential', pos: 'Centre-left', score: 3.4, tags: 'Social democracy, European federalism', bloc: 'Left', color: '#ff5588' },
+      { id: 'attal', short: 'Renaissance (Pres.)', name: 'Renaissance / Ensemble (Presidential)', leader: 'Gabriel Attal', era: '2027 Presidential', pos: 'Centre', score: 5.0, tags: 'Social liberalism, Centrism, Pro-Europeanism', bloc: 'Centre', color: '#ffca28' },
+      { id: 'philippe', short: 'Horizons (Pres.)', name: 'Horizons / Ensemble (Presidential)', leader: 'Édouard Philippe', era: '2027 Presidential', pos: 'Centre-right', score: 5.8, tags: 'Liberal conservatism, Christian democracy', bloc: 'Centre', color: '#38bdf8' },
+      { id: 'retailleau', short: 'LR (Pres.)', name: 'Les Républicains (Presidential)', leader: 'Bruno Retailleau', era: '2027 Presidential', pos: 'Right-wing', score: 7.4, tags: 'Gaullism, Liberal conservatism, National conservatism', bloc: 'Right', color: '#0066cc' },
+      { id: 'nda', short: 'DLF (Pres.)', name: 'Debout la France (Presidential)', leader: 'Nicolas Dupont-Aignan', era: '2027 Presidential', pos: 'Right-wing to Far-right', score: 8.3, tags: 'Sovereigntism, Social Gaullism, Euroscepticism', bloc: 'Far-right', color: '#4f46e5' },
+      { id: 'rn', short: 'RN', name: 'Rassemblement National', leader: 'Jordan Bardella / Marine Le Pen', era: '2027 Pres. & Leg.', pos: 'Far-right', score: 8.9, tags: 'French nationalism, Right-wing populism, Euroscepticism', bloc: 'Far-right', color: '#1e3a8a' },
+      { id: 'zemmour', short: 'Reconquête (Pres.)', name: 'Reconquête! (Presidential)', leader: 'Éric Zemmour', era: '2027 Presidential', pos: 'Far-right', score: 9.7, tags: 'Ultranationalism, National conservatism, Identitarianism', bloc: 'Far-right', color: '#312e81' },
+      { id: 'lfi', short: 'LFI', name: 'La France Insoumise (Legislative)', leader: 'Jean-Luc Mélenchon / Mathilde Panot', era: '2027 Legislative', pos: 'Left-wing to Far-left', score: 1.8, tags: 'Democratic socialism, Left-wing populism', bloc: 'New Popular Front', color: '#cc2443' },
+      { id: 'pcf', short: 'PCF', name: 'Parti Communiste Français (Legislative)', leader: 'Fabien Roussel', era: '2027 Legislative', pos: 'Left-wing to Far-left', score: 2.0, tags: 'Communism, Socialism', bloc: 'New Popular Front', color: '#dd0000' },
+      { id: 'eco', short: 'Écologistes', name: 'Les Écologistes – EELV (Legislative)', leader: 'Marine Tondelier', era: '2027 Legislative', pos: 'Centre-left to Left-wing', score: 2.8, tags: 'Green politics, Political ecology', bloc: 'New Popular Front', color: '#22c55e' },
+      { id: 'ps', short: 'PS–PP', name: 'Parti Socialiste – Place Publique (Legislative)', leader: 'Olivier Faure / Raphaël Glucksmann', era: '2027 Legislative', pos: 'Centre-left', score: 3.4, tags: 'Social democracy, Pro-Europeanism', bloc: 'New Popular Front', color: '#f43f5e' },
+      { id: 'ren', short: 'Renaissance', name: 'Renaissance (Legislative)', leader: 'Gabriel Attal', era: '2027 Legislative', pos: 'Centre', score: 5.0, tags: 'Liberalism, Centrism, Pro-Europeanism', bloc: 'Ensemble', color: '#facc15' },
+      { id: 'modem', short: 'MoDem', name: 'Mouvement Démocrate (Legislative)', leader: 'François Bayrou', era: '2027 Legislative', pos: 'Centre', score: 5.2, tags: 'Centrism, Christian democracy, Pro-Europeanism', bloc: 'Ensemble', color: '#fb923c' },
+      { id: 'hor', short: 'Horizons', name: 'Horizons (Legislative)', leader: 'Édouard Philippe', era: '2027 Legislative', pos: 'Centre-right', score: 5.8, tags: 'Liberal conservatism', bloc: 'Ensemble', color: '#38bdf8' },
+      { id: 'div', short: 'LIOT / Rég.', name: 'LIOT / Regionalists / Miscellaneous', leader: 'Laurent Panifous / Régionalistes', era: '2027 Legislative', pos: 'Centre / Regionalist', score: 5.0, tags: 'Regionalism, Centrism, Localism', bloc: 'Others', color: '#94a3b8' },
+      { id: 'lr', short: 'LR', name: 'Les Républicains (Legislative)', leader: 'Bruno Retailleau', era: '2027 Legislative', pos: 'Centre-right to Right-wing', score: 7.3, tags: 'Gaullism, Conservatism', bloc: 'Right', color: '#2563eb' },
+      { id: 'udr', short: 'UDR', name: 'Union des Droites pour la République', leader: 'Éric Ciotti', era: '2027 Legislative', pos: 'Right-wing to Far-right', score: 8.4, tags: 'National conservatism, Right-wing alliance', bloc: 'RN-UDR Alliance', color: '#1d4ed8' },
+      { id: 'rec', short: 'Reconquête', name: 'Reconquête! (Legislative)', leader: 'Éric Zemmour', era: '2027 Legislative', pos: 'Far-right', score: 9.7, tags: 'Ultranationalism, National conservatism', bloc: 'Far-right', color: '#4c1d95' },
+    ],
+    uk: [
+      { id: 'green', short: 'Grn', name: 'Green Party of England and Wales', leader: 'Carla Denyer & Adrian Ramsay', era: '2024 Parliamentary', pos: 'Left-wing', score: 2.5, tags: 'Green politics, Eco-socialism, Progressivism', bloc: 'GB', color: '#02a95b' },
+      { id: 'lab', short: 'Lab', name: 'Labour Party', leader: 'Keir Starmer', era: '2024 Parliamentary', pos: 'Centre-left', score: 3.7, tags: 'Social democracy, Third Way', bloc: 'GB', color: '#e4003b' },
+      { id: 'snp', short: 'SNP', name: 'Scottish National Party', leader: 'John Swinney', era: '2024 Parliamentary', pos: 'Centre-left', score: 3.5, tags: 'Scottish independence, Social democracy', bloc: 'Scotland', color: '#fdf38e' },
+      { id: 'pc', short: 'PC', name: 'Plaid Cymru', leader: 'Rhun ap Iorwerth', era: '2024 Parliamentary', pos: 'Centre-left', score: 3.4, tags: 'Welsh nationalism, Democratic socialism, Social democracy', bloc: 'Wales', color: '#008142' },
+      { id: 'ld', short: 'LD', name: 'Liberal Democrats', leader: 'Ed Davey', era: '2024 Parliamentary', pos: 'Centre', score: 4.6, tags: 'Social liberalism, Liberalism, Pro-Europeanism', bloc: 'GB', color: '#faa61a' },
+      { id: 'con', short: 'Con', name: 'Conservative and Unionist Party', leader: 'Rishi Sunak / Kemi Badenoch', era: '2024 Parliamentary', pos: 'Centre-right to Right-wing', score: 7.0, tags: 'Conservatism, Economic liberalism, British unionism', bloc: 'GB', color: '#0087dc' },
+      { id: 'ref', short: 'Ref', name: 'Reform UK', leader: 'Nigel Farage', era: '2024 Parliamentary', pos: 'Right-wing to Far-right', score: 8.6, tags: 'Right-wing populism, National conservatism, Euroscepticism', bloc: 'GB', color: '#12b6cf' },
+      { id: 'sf', short: 'SF', name: 'Sinn Féin', leader: 'Mary Lou McDonald / Michelle O\'Neill', era: '2024 Parliamentary', pos: 'Left-wing', score: 2.4, tags: 'Irish republicanism, Democratic socialism', bloc: 'Northern Ireland', color: '#326760' },
+      { id: 'sdlp', short: 'SDLP', name: 'Social Democratic and Labour Party', leader: 'Colum Eastwood', era: '2024 Parliamentary', pos: 'Centre-left', score: 3.6, tags: 'Social democracy, Irish nationalism', bloc: 'Northern Ireland', color: '#2aa82c' },
+      { id: 'apni', short: 'All', name: 'Alliance Party of Northern Ireland', leader: 'Naomi Long', era: '2024 Parliamentary', pos: 'Centre', score: 4.8, tags: 'Liberalism, Non-sectarianism', bloc: 'Northern Ireland', color: '#f6cb2f' },
+      { id: 'uup', short: 'UUP', name: 'Ulster Unionist Party', leader: 'Mike Nesbitt', era: '2024 Parliamentary', pos: 'Centre-right', score: 6.6, tags: 'Ulster unionism, Conservatism', bloc: 'Northern Ireland', color: '#48a5ee' },
+      { id: 'dup', short: 'DUP', name: 'Democratic Unionist Party', leader: 'Gavin Robinson', era: '2024 Parliamentary', pos: 'Right-wing', score: 7.8, tags: 'Ulster loyalism, British unionism, Social conservatism', bloc: 'Northern Ireland', color: '#d46a4c' },
+      { id: 'tuv', short: 'TUV', name: 'Traditional Unionist Voice', leader: 'Jim Allister', era: '2024 Parliamentary', pos: 'Right-wing to Far-right', score: 8.7, tags: 'Hardline Ulster unionism, Social conservatism', bloc: 'Northern Ireland', color: '#0c3a6a' },
+      { id: 'other', short: 'Ind/Oth', name: 'Independent / Other', leader: 'Various', era: '2024 Parliamentary', pos: 'Various', score: 5.0, tags: 'Independent / Localism', bloc: 'UK', color: '#8892a6' },
+      { id: 'speaker', short: 'Spk', name: 'Speaker of the House of Commons', leader: 'Lindsay Hoyle', era: '2024 Parliamentary', pos: 'Non-partisan', score: 5.0, tags: 'Parliamentary impartiality', bloc: 'Chorley', color: '#d4af37' },
+    ],
+    usa: [
+      { id: 'DEM', short: 'Democrats', name: 'Democratic Party', leader: 'Gavin Newsom / Kamala Harris', era: '2028 Presidential', pos: 'Centre-left', score: 3.8, tags: 'Modern American liberalism, Social liberalism, Progressivism', bloc: 'Blue States', color: '#2e6fd8' },
+      { id: 'GOP', short: 'Republicans', name: 'Republican Party (GOP)', leader: 'J.D. Vance / Marco Rubio', era: '2028 Presidential', pos: 'Right-wing', score: 7.8, tags: 'American conservatism, National conservatism, Right-wing populism', bloc: 'Red States', color: '#d8343b' },
+    ],
+    israel: [
+      { id: 'HADASH', short: "Hadash–Ta'al", name: "Hadash–Ta'al", leader: 'Ayman Odeh & Ahmad Tibi', era: '2026 Knesset', pos: 'Left-wing', score: 1.8, tags: 'Arab-Jewish socialism, Two-state solution, Secularism', bloc: 'Arab bloc', color: '#dc2626' },
+      { id: 'BALAD', short: 'Balad', name: 'Balad (National Democratic Assembly)', leader: 'Sami Abu Shehadeh', era: '2026 Knesset', pos: 'Left-wing', score: 2.2, tags: 'Arab nationalism, Left-wing nationalism, State of all its citizens', bloc: 'Arab bloc', color: '#ea580c' },
+      { id: 'RAAM', short: "Ra'am", name: "United Arab List (Ra'am)", leader: 'Mansour Abbas', era: '2026 Knesset', pos: 'Centre / Social conservative', score: 4.5, tags: 'Arab Israeli interests, Islamic democracy, Social conservatism', bloc: 'Opposition / Swing', color: '#15803d' },
+      { id: 'DEM', short: 'The Democrats', name: 'The Democrats (Labor–Meretz Union)', leader: 'Yair Golan', era: '2026 Knesset', pos: 'Centre-left to Left-wing', score: 3.0, tags: 'Social democracy, Labor Zionism, Liberal Zionism', bloc: 'Opposition bloc', color: '#e11d48' },
+      { id: 'YA', short: 'Yesh Atid', name: 'Yesh Atid', leader: 'Yair Lapid', era: '2026 Knesset', pos: 'Centre', score: 4.8, tags: 'Liberal Zionism, Secularism, Centrism', bloc: 'Opposition bloc', color: '#f97316' },
+      { id: 'NU', short: 'National Unity', name: 'National Unity (Blue and White)', leader: 'Benny Gantz', era: '2026 Knesset', pos: 'Centre to Centre-right', score: 5.5, tags: 'Statism (Mamlachtiyut), Liberal conservatism, Pragmatism', bloc: 'Opposition bloc', color: '#38bdf8' },
+      { id: 'BENNETT', short: 'Bennett 2026', name: 'Bennett 2026 (New Right)', leader: 'Naftali Bennett', era: '2026 Knesset', pos: 'Right-wing', score: 7.2, tags: 'National conservatism, Economic liberalism, Religious-secular bridge', bloc: 'Opposition bloc', color: '#059669' },
+      { id: 'YB', short: 'Yisrael Beiteinu', name: 'Yisrael Beiteinu', leader: 'Avigdor Lieberman', era: '2026 Knesset', pos: 'Right-wing', score: 7.4, tags: 'Secular nationalism, Revisionist Zionism', bloc: 'Opposition bloc', color: '#0284c7' },
+      { id: 'LIKUD', short: 'Likud', name: 'Likud – National Liberal Movement', leader: 'Benjamin Netanyahu', era: '2026 Knesset', pos: 'Right-wing', score: 7.6, tags: 'National conservatism, Revisionist Zionism, Right-wing populism', bloc: 'Netanyahu bloc', color: '#1d4ed8' },
+      { id: 'SHAS', short: 'Shas', name: 'Shas (Sephardic Shomrei Torah)', leader: 'Aryeh Deri', era: '2026 Knesset', pos: 'Right-wing (Religious)', score: 7.8, tags: 'Sephardic Haredi interests, Religious conservatism, Welfare', bloc: 'Netanyahu bloc', color: '#d97706' },
+      { id: 'UTJ', short: 'UTJ', name: 'United Torah Judaism', leader: 'Yitzhak Goldknopf & Moshe Gafni', era: '2026 Knesset', pos: 'Right-wing (Religious)', score: 8.0, tags: 'Ashkenazi Haredi interests, Halakhic conservatism', bloc: 'Netanyahu bloc', color: '#475569' },
+      { id: 'RZ', short: 'Religious Zionism', name: 'Religious Zionism (Mafdal – Tkuma)', leader: 'Bezalel Smotrich', era: '2026 Knesset', pos: 'Far-right', score: 9.1, tags: 'Religious Zionism, Hardline settlement expansion, Social conservatism', bloc: 'Netanyahu bloc', color: '#7c3aed' },
+      { id: 'OY', short: 'Otzma Yehudit', name: 'Otzma Yehudit (Jewish Power)', leader: 'Itamar Ben-Gvir', era: '2026 Knesset', pos: 'Far-right', score: 9.6, tags: 'Ultranationalism, Kahanism-inspired religious nationalism', bloc: 'Netanyahu bloc', color: '#991b1b' },
+    ],
+    canada: [
+      { id: 'NDP', short: 'NDP', name: 'New Democratic Party (NDP)', leader: 'Jagmeet Singh', era: '2025 Federal', pos: 'Centre-left to Left-wing', score: 2.8, tags: 'Social democracy, Democratic socialism', bloc: 'Progressive', color: '#f58220' },
+      { id: 'GPC', short: 'Green', name: 'Green Party of Canada', leader: 'Elizabeth May & Jonathan Pedneault', era: '2025 Federal', pos: 'Centre-left', score: 3.4, tags: 'Green politics, Environmentalism', bloc: 'Green', color: '#3d9b35' },
+      { id: 'BQ', short: 'Bloc', name: 'Bloc Québécois', leader: 'Yves-François Blanchet', era: '2025 Federal', pos: 'Centre-left', score: 3.6, tags: 'Quebec nationalism, Quebec sovereignty, Social democracy', bloc: 'Quebec regional', color: '#00a7e1' },
+      { id: 'LPC', short: 'Liberal', name: 'Liberal Party of Canada', leader: 'Mark Carney', era: '2025 Federal', pos: 'Centre to Centre-left', score: 4.5, tags: 'Liberalism, Social liberalism, Centrism', bloc: 'Liberal', color: '#d71920' },
+      { id: 'CPC', short: 'Conservative', name: 'Conservative Party of Canada', leader: 'Pierre Poilievre', era: '2025 Federal', pos: 'Centre-right to Right-wing', score: 7.2, tags: 'Conservatism, Fiscal conservatism, Right-wing populism', bloc: 'Conservative', color: '#1a4782' },
+      { id: 'PPC', short: 'PPC', name: "People's Party of Canada", leader: 'Maxime Bernier', era: '2025 Federal', pos: 'Right-wing to Far-right', score: 8.8, tags: 'Right-wing populism, Libertarian conservatism', bloc: 'Right', color: '#6f2da8' },
+    ],
+    italy: [
+      { id: 'AVS', short: 'AVS', name: 'Alleanza Verdi e Sinistra', leader: 'Angelo Bonelli & Nicola Fratoianni', era: '2022 General', pos: 'Left-wing', score: 2.3, tags: 'Eco-socialism, Green politics, Democratic socialism', bloc: 'Centre-left coalition', color: '#16a34a' },
+      { id: 'M5S', short: 'M5S', name: 'Movimento 5 Stelle', leader: 'Giuseppe Conte', era: '2022 General', pos: 'Centre-left / Populist', score: 3.3, tags: 'Left-wing populism, Environmentalism, Social welfare', bloc: 'Unaligned', color: '#f59e0b' },
+      { id: 'PD', short: 'PD', name: 'Partito Democratico', leader: 'Enrico Letta', era: '2022 General', pos: 'Centre-left', score: 3.6, tags: 'Social democracy, Christian left, Pro-Europeanism', bloc: 'Centre-left coalition', color: '#e11d48' },
+      { id: 'PE', short: '+Europa', name: '+Europa (More Europe)', leader: 'Emma Bonino', era: '2022 General', pos: 'Centre', score: 4.6, tags: 'Social liberalism, European federalism, Civil rights', bloc: 'Centre-left coalition', color: '#eab308' },
+      { id: 'SVP', short: 'SVP / Reg.', name: 'Südtiroler Volkspartei & Regional Minorities', leader: 'Philipp Achammer / Cateno De Luca', era: '2022 General', pos: 'Centre / Regionalist', score: 5.2, tags: 'Regionalism, Autonomy, Christian democracy', bloc: 'Regional', color: '#64748b' },
+      { id: 'AZIV', short: 'Az–IV', name: 'Azione – Italia Viva (Terzo Polo)', leader: 'Carlo Calenda & Matteo Renzi', era: '2022 General', pos: 'Centre', score: 5.3, tags: 'Liberalism, Social liberalism, Reformism, Pro-Europeanism', bloc: 'Third Pole', color: '#db2777' },
+      { id: 'NM', short: 'Noi Mod.', name: 'Noi Moderati', leader: 'Maurizio Lupi', era: '2022 General', pos: 'Centre-right', score: 6.3, tags: 'Christian democracy, Liberal conservatism', bloc: 'Centre-right coalition', color: '#38bdf8' },
+      { id: 'FI', short: 'Forza Italia', name: 'Forza Italia', leader: 'Silvio Berlusconi', era: '2022 General', pos: 'Centre-right', score: 6.7, tags: 'Liberal conservatism, Christian democracy', bloc: 'Centre-right coalition', color: '#0087dc' },
+      { id: 'LEGA', short: 'Lega', name: 'Lega per Salvini Premier', leader: 'Matteo Salvini', era: '2022 General', pos: 'Right-wing to Far-right', score: 8.4, tags: 'Right-wing populism, Regionalism, National conservatism', bloc: 'Centre-right coalition', color: '#008055' },
+      { id: 'FDI', short: 'FdI', name: "Fratelli d'Italia (Brothers of Italy)", leader: 'Giorgia Meloni', era: '2022 General', pos: 'Right-wing to Far-right', score: 8.6, tags: 'National conservatism, Right-wing populism', bloc: 'Centre-right coalition', color: '#0b3b6a' },
+    ],
+    russia: [
+      { id: 'kharitonov', short: 'CPRF', name: 'Communist Party of the Russian Federation (CPRF)', leader: 'Nikolay Kharitonov', era: '2024 Presidential', pos: 'Far-left (Social conservative)', score: 1.8, tags: 'Communism, Marxism-Leninism, Soviet patriotism', bloc: 'Systemic opposition', color: '#dc2626' },
+      { id: 'duntsova', short: 'Duntsova', name: 'Independent Democratic Opposition', leader: 'Yekaterina Duntsova', era: '2024 Presidential (Scenario)', pos: 'Centre-left to Centre', score: 4.2, tags: 'Social liberalism, Peace platform, Decentralization', bloc: 'Non-systemic opposition', color: '#10b981' },
+      { id: 'nadezhdin', short: 'Civic Init.', name: 'Civic Initiative (Grazhdanskaya Initsiativa)', leader: 'Boris Nadezhdin', era: '2024 Presidential (Scenario)', pos: 'Centre to Centre-right', score: 5.2, tags: 'Liberal democracy, Constitutionalism, Anti-war reformism', bloc: 'Non-systemic opposition', color: '#0ea5e9' },
+      { id: 'davankov', short: 'New People', name: 'New People (Novye Lyudi)', leader: 'Vladislav Davankov', era: '2024 Presidential', pos: 'Centre-right', score: 5.8, tags: 'Liberalism, Entrepreneurship, Moderate modernization', bloc: 'Systemic opposition', color: '#06b6d4' },
+      { id: 'putin', short: 'Putin (ONF)', name: 'Independent / United Russia (ONF)', leader: 'Vladimir Putin', era: '2024 Presidential', pos: 'Right-wing', score: 7.8, tags: 'Russian nationalism, Statism, Conservatism, Sovereign democracy', bloc: 'Incumbent', color: '#1d4ed8' },
+      { id: 'slutsky', short: 'LDPR', name: 'Liberal Democratic Party of Russia (LDPR)', leader: 'Leonid Slutsky', era: '2024 Presidential', pos: 'Far-right', score: 9.0, tags: 'Russian ultranationalism, Imperialism, Right-wing populism', bloc: 'Systemic opposition', color: '#eab308' },
+    ],
+  };
+
+  function loadIdeologyDB() {
+    const db = util.clone(DEFAULT_IDEOLOGY_DB);
+    try {
+      const raw = localStorage.getItem('es_ideology_overrides_v1');
+      if (raw) {
+        const ov = JSON.parse(raw);
+        for (const cid in ov) {
+          if (!db[cid]) continue;
+          ov[cid].forEach((u) => {
+            const target = db[cid].find((x) => x.id === u.id);
+            if (target) {
+              if (u.pos) target.pos = u.pos;
+              if (u.score !== undefined) target.score = Math.max(1, Math.min(10, +u.score || 5));
+              if (u.tags !== undefined) target.tags = u.tags;
+            }
+          });
+        }
+      }
+    } catch (e) {}
+    return db;
+  }
+
+  ES.IDEOLOGY_DB = loadIdeologyDB();
+  ES.saveIdeologyOverrides = function () {
+    try {
+      const ov = {};
+      for (const cid in ES.IDEOLOGY_DB) {
+        ov[cid] = ES.IDEOLOGY_DB[cid].map((x) => ({ id: x.id, pos: x.pos, score: x.score, tags: x.tags }));
+      }
+      localStorage.setItem('es_ideology_overrides_v1', JSON.stringify(ov));
+    } catch (e) {}
+  };
+  ES.resetIdeologyOverrides = function () {
+    try { localStorage.removeItem('es_ideology_overrides_v1'); } catch (e) {}
+    ES.IDEOLOGY_DB = util.clone(DEFAULT_IDEOLOGY_DB);
+  };
+
+  ES.getActiveHungaryEra = function () {
+    const activeBtn = document.querySelector('.hu-year-btn.active');
+    if (!activeBtn) return '2026';
+    return activeBtn.textContent.trim();
+  };
+
+  ES.getIdeology = function (partyOrId, countryId) {
+    if (!partyOrId) return null;
+    const cid = countryId || ES.activeCountryId || location.hash.slice(1) || 'hungary';
+    const list = ES.IDEOLOGY_DB[cid] || [];
+    const rawId = typeof partyOrId === 'string' ? partyOrId : partyOrId.id;
+    const nameStr = typeof partyOrId === 'object' ? (partyOrId.name || partyOrId.short || '') : '';
+
+    // Hungary historical shift handling (Fidesz 1990-1994 vs 1998+, Jobbik 2010-2014 vs 2018)
+    if (cid === 'hungary' && rawId) {
+      const yr = ES.getActiveHungaryEra();
+      if (rawId === 'FIDESZ' && (yr.startsWith('1990') || yr.startsWith('1994'))) {
+        const early = list.find((x) => x.id === 'FIDESZ_1990');
+        if (early) return early;
+      }
+      if (rawId === 'JOBBIK' && (yr.startsWith('2010') || yr.startsWith('2014'))) {
+        const earlyJ = list.find((x) => x.id === 'JOBBIK_EARLY');
+        if (earlyJ) return earlyJ;
+      }
+    }
+
+    if (rawId) {
+      const exact = list.find((x) => x.id === rawId || x.id.toLowerCase() === String(rawId).toLowerCase());
+      if (exact) return exact;
+    }
+    if (nameStr) {
+      const low = nameStr.toLowerCase();
+      if (cid === 'usa') {
+        if (low.includes('democrat')) return list.find((x) => x.id === 'DEM');
+        if (low.includes('republican') || low.includes('gop')) return list.find((x) => x.id === 'GOP');
+      }
+      const byName = list.find(
+        (x) =>
+          (x.short && low === x.short.toLowerCase()) ||
+          (x.name && low === x.name.toLowerCase()) ||
+          (x.short && low.startsWith(x.short.toLowerCase()))
+      );
+      if (byName) return byName;
+    }
+    return null;
+  };
+
+  ES.spectrumClass = function (pos, score) {
+    const p = String(pos || '').toLowerCase();
+    if (p.includes('big tent') || p.includes('satirical') || p.includes('non-aligned') || p.includes('non-partisan') || p.includes('various') || p.includes('minority')) {
+      if (!p.includes('centre-left') && !p.includes('centre-right')) return 'ideo-syncretic';
+    }
+    const s = +score || 5.0;
+    if (s <= 1.9) return 'ideo-far-left';
+    if (s <= 2.9) return 'ideo-left';
+    if (s <= 4.3) return 'ideo-centre-left';
+    if (s <= 5.6) return 'ideo-centre';
+    if (s <= 7.1) return 'ideo-centre-right';
+    if (s <= 8.4) return 'ideo-right';
+    return 'ideo-far-right';
+  };
+
+  ES.scoreToLabel = function (s) {
+    if (s <= 1.9) return 'Far-Left';
+    if (s <= 2.9) return 'Left-Wing';
+    if (s <= 4.3) return 'Centre-Left';
+    if (s <= 5.6) return 'Centre';
+    if (s <= 7.1) return 'Centre-Right';
+    if (s <= 8.4) return 'Right-Wing';
+    return 'Far-Right';
+  };
+
+  ES.ideologyBadge = function (partyOrInfo, opts = {}) {
+    const info = partyOrInfo && partyOrInfo.pos && partyOrInfo.score !== undefined ? partyOrInfo : ES.getIdeology(partyOrInfo, opts.countryId);
+    if (!info) return null;
+    const cls = ES.spectrumClass(info.pos, info.score);
+    const shortPos = info.pos
+      .replace('Centre-left to Left-wing', 'Centre-left / Left')
+      .replace('Left-wing to Far-left', 'Left / Far-left')
+      .replace('Centre-right to Right-wing', 'Centre-right / Right')
+      .replace('Right-wing to Far-right', 'Right / Far-right')
+      .replace('Centre to Centre-right', 'Centre / C-Right')
+      .replace('Centre to Centre-left', 'Centre / C-Left')
+      .replace('Centre-left to Centre', 'C-Left / Centre')
+      .replace('Right-wing (Religiously conservative)', 'Right (Religious)')
+      .replace('Far-left (Socially conservative)', 'Far-left');
+    const badge = util.el('span', { class: 'ideo-badge ' + cls }, [
+      util.el('span', { text: shortPos }),
+      opts.hideScore ? null : util.el('span', { class: 'ideo-score', text: '· ' + Number(info.score).toFixed(1) }),
+    ]);
+    const tip = ES.ui.tooltip();
+    badge.addEventListener('mouseenter', (e) => {
+      tip.show(
+        e,
+        `<div style="line-height:1.45">
+          <b>${info.name || info.short}</b> ${info.era ? `<span class="muted">(${info.era})</span>` : ''}<br>
+          <span style="color:var(--gold);font-weight:700">🧭 ${info.pos}</span> · Score: <b>${Number(info.score).toFixed(1)} / 10</b><br>
+          <span style="color:#a5b4fc">🏷️ ${info.tags || '—'}</span>
+        </div>`
+      );
+    });
+    badge.addEventListener('mousemove', (e) => tip.move(e));
+    badge.addEventListener('mouseleave', () => tip.hide());
+    return badge;
+  };
+
+  /**
+   * Interactive 1.0 (Far-Left) to 10.0 (Far-Right) Political Spectrum & Center of Gravity Widget
+   */
+  ES.spectrumWidget = function (items, opts = {}) {
+    const wrap = util.el('div', { class: 'spectrum-widget' });
+    const tip = ES.ui.tooltip();
+
+    function update(curItems) {
+      wrap.innerHTML = '';
+      const enriched = [];
+      let totalW = 0;
+      let weightedSum = 0;
+      let leftW = 0, centreW = 0, rightW = 0;
+
+      (curItems || []).forEach((p) => {
+        const w = +(p.weight !== undefined ? p.weight : p.seats !== undefined ? p.seats : p.votes || 0);
+        if (w <= 0) return;
+        const info = ES.getIdeology(p, opts.countryId);
+        if (!info) return;
+        const sc = +info.score || 5.0;
+        totalW += w;
+        weightedSum += w * sc;
+        if (sc <= 4.3) leftW += w;
+        else if (sc <= 6.0) centreW += w;
+        else rightW += w;
+        enriched.push({ p, info, w, sc });
+      });
+
+      if (!enriched.length || totalW <= 0) {
+        wrap.style.display = 'none';
+        return;
+      }
+      wrap.style.display = 'flex';
+      const cog = weightedSum / totalW;
+      const cogPct = Math.max(2, Math.min(98, ((cog - 1) / 9) * 100));
+      const unit = opts.unit || (opts.isVotes ? '%' : 'seats');
+      const fmtW = (v) => (opts.isVotes ? util.fmt((v / totalW) * 100, 1) + '%' : Math.round(v));
+
+      const head = util.el('div', { class: 'spectrum-head' }, [
+        util.el('div', { class: 'spectrum-title', html: `🧭 ${opts.title || 'Political Spectrum Compass'} <span class="muted" style="font-size:11px;font-weight:500;text-transform:none">(1.0 Left → 10.0 Right)</span>` }),
+        util.el('div', { class: 'spectrum-blocs' }, [
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#fda4af' }, html: `Left: <b>${fmtW(leftW)}</b>` }),
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#fef08a' }, html: `Centre: <b>${fmtW(centreW)}</b>` }),
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#93c5fd' }, html: `Right: <b>${fmtW(rightW)}</b>` }),
+          util.el('span', {
+            class: 'spectrum-bloc-pill',
+            style: { borderColor: 'rgba(245,184,46,0.5)', color: 'var(--gold)' },
+            html: `⚖️ Avg: <b>${cog.toFixed(1)}</b> (${ES.scoreToLabel(cog)})`,
+          }),
+        ]),
+      ]);
+      wrap.appendChild(head);
+
+      const trackWrap = util.el('div', { class: 'spectrum-track-wrap' }, [
+        util.el('div', { class: 'spectrum-track' }),
+        util.el('div', { class: 'spectrum-center-tick', title: 'Ideological Centre (5.5)' }),
+        util.el('div', { class: 'spectrum-cog', style: { left: cogPct.toFixed(2) + '%' } }),
+      ]);
+
+      // Sort smaller bubbles on top of larger ones so none are hidden
+      enriched
+        .slice()
+        .sort((a, b) => b.w - a.w)
+        .forEach(({ p, info, w, sc }) => {
+          const share = w / totalW;
+          const sz = Math.round(16 + Math.sqrt(share) * 18);
+          const leftPct = Math.max(2, Math.min(98, ((sc - 1) / 9) * 100));
+          const col = p.color || info.color || '#38bdf8';
+          const shortCode = (p.short || info.short || p.name || '').slice(0, 3).toUpperCase();
+          const node = util.el(
+            'div',
+            {
+              class: 'spectrum-node',
+              style: {
+                left: leftPct.toFixed(2) + '%',
+                width: sz + 'px',
+                height: sz + 'px',
+                background: col,
+                color: util.textOn(col),
+              },
+            },
+            sz >= 22 ? shortCode : ''
+          );
+          node.addEventListener('mouseenter', (e) => {
+            tip.show(
+              e,
+              `<div style="line-height:1.45">
+                <b style="color:${col}">■</b> <b>${p.name || info.name}</b><br>
+                <span style="color:var(--gold);font-weight:700">${info.pos}</span> · Score: <b>${sc.toFixed(1)} / 10</b><br>
+                <span style="color:#a5b4fc">${info.tags}</span><br>
+                <b>${opts.isVotes ? util.fmt(w, 1) + '%' : w + ' ' + unit}</b> (${util.fmt(share * 100, 1)}%)
+              </div>`
+            );
+          });
+          node.addEventListener('mousemove', (e) => tip.move(e));
+          node.addEventListener('mouseleave', () => tip.hide());
+          trackWrap.appendChild(node);
+        });
+
+      wrap.appendChild(trackWrap);
+      wrap.appendChild(
+        util.el('div', { class: 'spectrum-scale' }, [
+          util.el('span', { text: '1.0 Far-Left' }),
+          util.el('span', { text: '3.0 Centre-Left' }),
+          util.el('span', { text: '5.5 Centre' }),
+          util.el('span', { text: '7.5 Centre-Right' }),
+          util.el('span', { text: '10.0 Far-Right' }),
+        ])
+      );
+    }
+
+    update(items);
+    return { el: wrap, update };
+  };
+
+  /* --------------------------------------------------------------------- */
   /* Hemicycle (parliament) diagram                                         */
   /* --------------------------------------------------------------------- */
   ES.hemicycle = function (container, parties, opts = {}) {
@@ -288,6 +696,7 @@
       const tip = ES.ui.tooltip();
       active.forEach((p) => {
         const pic = p.img || ES.leaderImg(p.leader || p.name);
+        const ideo = ES.getIdeology(p);
         for (let s = 0; s < p.seats && idx < seats.length; s++, idx++) {
           const st = seats[idx];
           const c = document.createElementNS(svgNS, 'circle');
@@ -298,10 +707,16 @@
           c.setAttribute('data-party', p.id);
           c.addEventListener('mouseenter', (e) => {
             svg.querySelectorAll(`circle[data-party="${CSS.escape(p.id)}"]`).forEach((x) => x.classList.add('hl'));
-            const imgHtml = pic ? `<img src="${pic}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid ${p.color};float:left;margin-right:8px;" />` : '';
+            const imgHtml = pic ? `<img src="${pic}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid ${p.color};float:left;margin-right:8px;" />` : '';
+            const ideoHtml = ideo
+              ? `<div style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(255,255,255,0.12);font-size:11px">
+                  <span style="color:var(--gold);font-weight:700">🧭 ${ideo.pos}</span> · <b>${Number(ideo.score).toFixed(1)}/10</b><br>
+                  <span style="color:#a5b4fc">${ideo.tags}</span>
+                </div>`
+              : '';
             tip.show(
               e,
-              `<div style="overflow:hidden">${imgHtml}<b style="color:${p.color}">■</b> <b>${p.name}</b>${p.leader ? `<br><small>${p.leader}</small>` : ''}<br><b>${p.seats}</b> seats (${util.fmt((p.seats / total) * 100)}%)</div>`
+              `<div style="overflow:hidden">${imgHtml}<b style="color:${p.color}">■</b> <b>${p.name}</b>${p.leader ? `<br><small>${p.leader}</small>` : ''}<br><b>${p.seats}</b> seats (${util.fmt((p.seats / total) * 100)}%)${ideoHtml}</div>`
             );
           });
           c.addEventListener('mousemove', (e) => tip.move(e));
@@ -334,6 +749,14 @@
     t2.textContent = opts.subtitle || `Majority: ${majority}`;
     svg.appendChild(t2);
     container.appendChild(svg);
+
+    if (opts.showSpectrum !== false && active.length > 0) {
+      const spec = ES.spectrumWidget(
+        active.map((p) => ({ ...p, weight: p.seats })),
+        { title: 'Parliament Ideological Balance', unit: 'seats' }
+      );
+      container.appendChild(spec.el);
+    }
     return svg;
   };
 
@@ -399,7 +822,7 @@
   };
 
   /**
-   * Percentage sliders – automatically displays leader portrait if p.img or ES.leaderImg(p.leader) matches!
+   * Percentage sliders – automatically displays leader portrait + Political Spectrum badge & Ideology tags!
    */
   ui.sliders = function (parties, values, opts = {}) {
     const max = opts.max || 70;
@@ -407,6 +830,17 @@
     const root = el('div', { class: 'sliders' });
     const rows = {};
     const totalEl = el('div', { class: 'slider-total' });
+    let specCtrl = null;
+
+    function updateSpectrum() {
+      if (!specCtrl) return;
+      specCtrl.update(
+        parties.map((p) => ({
+          ...p,
+          weight: Math.max(0, +values[p.id] || 0),
+        }))
+      );
+    }
 
     function updateTotal() {
       const s = util.sum(values);
@@ -426,6 +860,7 @@
         opts.onChange && opts.onChange(values);
       });
       totalEl.appendChild(nb);
+      updateSpectrum();
     }
 
     parties.forEach((p) => {
@@ -449,14 +884,20 @@
       num.addEventListener('change', () => set(num.value, num));
 
       const pic = p.img || ES.leaderImg(p.leader) || ES.leaderImg(p.name);
+      const ideo = ES.getIdeology(p);
+      const badge = ideo ? ES.ideologyBadge(ideo) : null;
       const row = el('div', { class: 'slider-row' }, [
         el('div', { class: 'slider-label' }, [
           pic
             ? el('img', { class: 'leader-avatar', src: pic, alt: p.leader || p.name, style: { '--c': p.color } })
             : el('span', { class: 'swatch', style: { background: p.color } }),
           el('div', { class: 'slider-names' }, [
-            el('span', { class: 'pname', text: p.name }),
+            el('div', { class: 'pname-row' }, [
+              el('span', { class: 'pname', text: p.name }),
+              badge,
+            ]),
             p.leader ? el('span', { class: 'pleader', text: p.leader }) : null,
+            ideo && ideo.tags ? el('span', { class: 'ideo-tags', text: ideo.tags, title: ideo.tags }) : null,
           ]),
         ]),
         range,
@@ -467,6 +908,15 @@
       root.appendChild(row);
     });
     root.appendChild(totalEl);
+
+    if (opts.showSpectrum !== false) {
+      specCtrl = ES.spectrumWidget(
+        parties.map((p) => ({ ...p, weight: Math.max(0, +values[p.id] || 0) })),
+        { title: 'Vote-Weighted Spectrum', isVotes: true }
+      );
+      root.appendChild(specCtrl.el);
+    }
+
     updateTotal();
 
     function refresh() {
@@ -486,7 +936,7 @@
     };
   };
 
-  /** Results table – automatically displays leader portrait if present */
+  /** Results table – automatically displays leader portrait + Political Spectrum badge & Ideology tags */
   ui.resultsTable = function (rows, opts = {}) {
     const cols = opts.columns || [
       { key: 'votes', label: 'Votes', fmt: (v) => (v === undefined ? '–' : util.fmt(v) + '%') },
@@ -497,13 +947,17 @@
     const tb = el('tbody');
     rows.forEach((r) => {
       const pic = r.img || ES.leaderImg(r.leader) || ES.leaderImg(r.name);
+      const ideo = ES.getIdeology(r);
+      const badge = ideo ? ES.ideologyBadge(ideo) : null;
       tb.appendChild(
         el('tr', { class: r.dim ? 'dim' : '' }, [
           el('td', {}, [
             pic ? el('img', { class: 'leader-avatar-sm', src: pic, alt: r.leader || r.name, style: { '--c': r.color } }) : null,
             el('span', { class: 'swatch', style: { background: r.color } }),
             el('span', { class: 'rname', text: r.name }),
+            badge,
             r.leader ? el('span', { class: 'rleader' + (pic ? ' with-pic' : ''), text: r.leader }) : null,
+            ideo && ideo.tags ? el('span', { class: 'r-ideo-Sub' + (pic ? ' with-pic' : ''), text: '🏷️ ' + ideo.tags }) : null,
           ]),
           ...cols.map((c) => el('td', { class: 'num', html: String(c.fmt ? c.fmt(r[c.key], r) : r[c.key] === undefined ? '–' : r[c.key]) })),
         ])
@@ -519,8 +973,12 @@
     const bar = el('div', { class: 'seatbar' });
     const tip = ui.tooltip();
     parties.filter((p) => p.seats > 0).forEach((p) => {
+      const ideo = ES.getIdeology(p);
       const seg = el('div', { class: 'seg', style: { width: (p.seats / total) * 100 + '%', background: p.color, color: util.textOn(p.color) } }, (p.seats / total) > 0.055 ? String(p.seats) : '');
-      seg.addEventListener('mouseenter', (e) => tip.show(e, `<b>${p.name}</b><br>${p.seats}${opts.unit ? ' ' + opts.unit : ''}`));
+      seg.addEventListener('mouseenter', (e) => {
+        const ideoLine = ideo ? `<br><span style="color:var(--gold)">${ideo.pos} (${Number(ideo.score).toFixed(1)}/10)</span>` : '';
+        tip.show(e, `<b>${p.name}</b><br>${p.seats}${opts.unit ? ' ' + opts.unit : ''}${ideoLine}`);
+      });
       seg.addEventListener('mousemove', (e) => tip.move(e));
       seg.addEventListener('mouseleave', () => tip.hide());
       bar.appendChild(seg);
@@ -528,6 +986,13 @@
     bar.appendChild(el('div', { class: 'majline', style: { left: (majority / total) * 100 + '%' } }));
     wrap.appendChild(bar);
     if (opts.label !== false) wrap.appendChild(el('div', { class: 'seatbar-label', text: opts.label || `${majority} needed for a majority` }));
+    if (total === 538) {
+      const spec = ES.spectrumWidget(
+        parties.filter((p) => p.seats > 0 && p.name !== 'Toss-up').map((p) => ({ ...p, weight: p.seats })),
+        { title: 'Electoral College Spectrum', unit: 'EV' }
+      );
+      wrap.appendChild(spec.el);
+    }
     return wrap;
   };
 
@@ -581,7 +1046,7 @@
       presets.appendChild(
         el('button', {
           class: 'btn btn-xs',
-          text: 'Min. Winning Coalition',
+          text: 'Min. Winning',
           onclick: () => {
             const pick = [];
             let sumS = 0;
@@ -595,10 +1060,44 @@
           },
         })
       );
+      // Ideological Bloc Presets
+      const leftIds = active.filter((p) => { const i = ES.getIdeology(p); return i && i.score <= 5.3; }).map((p) => p.id);
+      const centreIds = active.filter((p) => { const i = ES.getIdeology(p); return i && i.score >= 3.3 && i.score <= 6.8; }).map((p) => p.id);
+      const rightIds = active.filter((p) => { const i = ES.getIdeology(p); return i && i.score >= 5.5; }).map((p) => p.id);
+      if (leftIds.length > 0) {
+        presets.appendChild(
+          el('button', {
+            class: 'btn btn-xs',
+            text: '🟥 Left-Centre Bloc',
+            title: 'Select all Left, Centre-Left, and Centrist parties (Score ≤ 5.3)',
+            onclick: () => applySet(leftIds),
+          })
+        );
+      }
+      if (centreIds.length > 1) {
+        presets.appendChild(
+          el('button', {
+            class: 'btn btn-xs',
+            text: '🟨 Centrist Bloc',
+            title: 'Select Centre-Left, Centre, and Centre-Right parties (Score 3.3–6.8)',
+            onclick: () => applySet(centreIds),
+          })
+        );
+      }
+      if (rightIds.length > 0) {
+        presets.appendChild(
+          el('button', {
+            class: 'btn btn-xs',
+            text: '🟦 Right-Centre Bloc',
+            title: 'Select all Centre-Right, Right-Wing, and Far-Right parties (Score ≥ 5.5)',
+            onclick: () => applySet(rightIds),
+          })
+        );
+      }
       presets.appendChild(
         el('button', {
           class: 'btn btn-xs',
-          text: 'Anti-1st Opposition Bloc',
+          text: 'Anti-1st Bloc',
           onclick: () => applySet(sorted.slice(1).map((p) => p.id)),
         })
       );
@@ -618,6 +1117,8 @@
 
     active.forEach((p) => {
       const pic = p.img || ES.leaderImg(p.leader) || ES.leaderImg(p.name);
+      const ideo = ES.getIdeology(p);
+      const badge = ideo ? ES.ideologyBadge(ideo) : null;
       const card = el(
         'button',
         { class: 'coal-card' + (chosen.has(p.id) ? ' on' : ''), style: { '--c': p.color } },
@@ -627,6 +1128,7 @@
             : el('span', { class: 'swatch', style: { background: p.color } }),
           el('div', { class: 'coal-card-info' }, [
             el('span', { class: 'coal-card-name', text: p.short || p.name }),
+            badge,
             el('span', { class: 'coal-card-sub', text: p.leader || `${util.fmt((p.seats / total) * 100, 1)}% of seats` }),
           ]),
           el('span', { class: 'coal-card-seats', style: { color: p.color }, text: p.seats }),
@@ -649,11 +1151,13 @@
       }
     }
 
-    // Meter bar + Status bar
+    // Meter bar + Status bar + Ideological Cohesion bar
     const meter = el('div', { class: 'coal-meter' });
     const status = el('div', { class: 'coal-status-bar' });
+    const ideoBar = el('div', { class: 'coal-ideo-bar' });
     wrap.appendChild(meter);
     wrap.appendChild(status);
+    wrap.appendChild(ideoBar);
 
     function upd(withSound) {
       const selParties = active.filter((p) => chosen.has(p.id));
@@ -712,6 +1216,35 @@
         </div>
         <div class="small muted">${leadText}</div>
       `;
+
+      // Calculate Coalition Ideological Position & Cohesion
+      const scored = selParties
+        .map((p) => ({ p, info: ES.getIdeology(p) }))
+        .filter((x) => x.info);
+      if (scored.length > 0 && s > 0) {
+        ideoBar.style.display = 'flex';
+        const wSum = scored.reduce((a, x) => a + x.p.seats * x.info.score, 0);
+        const wSeats = scored.reduce((a, x) => a + x.p.seats, 0);
+        const avgScore = wSeats > 0 ? wSum / wSeats : 5.0;
+        const scores = scored.map((x) => +x.info.score);
+        const minS = Math.min(...scores);
+        const maxS = Math.max(...scores);
+        const span = maxS - minS;
+        const cohesionHtml =
+          scored.length === 1
+            ? '<span style="color:#4ade80;font-weight:700">🟢 Single-Party Cohesion (Span 0.0)</span>'
+            : span <= 1.8
+            ? `<span style="color:#4ade80;font-weight:700">🟢 High Ideological Cohesion (Span ${span.toFixed(1)})</span>`
+            : span <= 3.5
+            ? `<span style="color:#facc15;font-weight:700">🟡 Moderate Compromise Coalition (Span ${span.toFixed(1)})</span>`
+            : `<span style="color:#fb923c;font-weight:700">🟠 Cross-Spectrum Tension (Span ${span.toFixed(1)})</span>`;
+        ideoBar.innerHTML = `
+          <div>🧭 Coalition Orientation: <b style="color:var(--gold)">${ES.scoreToLabel(avgScore)}</b> <span class="muted">(Weighted Score: <b>${avgScore.toFixed(1)} / 10</b>)</span></div>
+          <div>${cohesionHtml}</div>
+        `;
+      } else {
+        ideoBar.style.display = 'none';
+      }
 
       // Highlight selected coalition in any hemicycle on the page
       document.querySelectorAll('svg.hemicycle').forEach((svg) => {
@@ -787,6 +1320,172 @@
   };
 
   /* --------------------------------------------------------------------- */
+  /* Interactive 11-Country Political Spectrum & Ideology Explorer Modal    */
+  /* --------------------------------------------------------------------- */
+  const COUNTRY_LABELS = {
+    hungary: 'Hungary',
+    budapest: 'Budapest',
+    eu: 'European Union',
+    germany: 'Germany',
+    france: 'France',
+    uk: 'United Kingdom',
+    usa: 'USA',
+    israel: 'Israel',
+    canada: 'Canada',
+    italy: 'Italy',
+    russia: 'Russia',
+  };
+
+  ES.openIdeologyModal = function (initialCid, onUpdate) {
+    let selCid = initialCid || ES.activeCountryId || 'hungary';
+    if (!ES.IDEOLOGY_DB[selCid]) selCid = 'hungary';
+
+    ui.modal(
+      '🧭 Political Spectrum &amp; Party Ideology Codex (11 Countries)',
+      (body, close) => {
+        const topRow = el('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' } }, [
+          el('div', { class: 'small muted', html: 'Inspect or customize Left–Right Spectrum Positions, 1–10 Scores, and Ideologies across all 11 countries.' }),
+          el('div', { class: 'row', style: { gap: '6px' } }, [
+            el('a', {
+              class: 'btn btn-xs btn-primary',
+              href: 'election_simulator_parties.xlsx',
+              download: 'election_simulator_parties.xlsx',
+              text: '📥 Download Excel (.xlsx)',
+              style: { textDecoration: 'none' },
+            }),
+            el('button', {
+              class: 'btn btn-xs',
+              text: '↺ Reset Defaults',
+              onclick: () => {
+                ES.resetIdeologyOverrides();
+                renderTab();
+                onUpdate && onUpdate();
+              },
+            }),
+          ]),
+        ]);
+        body.appendChild(topRow);
+
+        const tabs = el('div', { class: 'codex-tabs' });
+        const content = el('div', { style: { display: 'flex', flexDirection: 'column', gap: '12px' } });
+        body.appendChild(tabs);
+        body.appendChild(content);
+
+        function renderTab() {
+          tabs.innerHTML = '';
+          Object.keys(ES.IDEOLOGY_DB).forEach((cid) => {
+            const btn = el(
+              'button',
+              {
+                class: 'btn btn-xs' + (cid === selCid ? ' btn-primary' : ''),
+                onclick: () => {
+                  sfx.click(540);
+                  selCid = cid;
+                  renderTab();
+                },
+              },
+              [ES.flag(cid, 12), el('span', { style: { marginLeft: '5px' }, text: COUNTRY_LABELS[cid] || cid })]
+            );
+            tabs.appendChild(btn);
+          });
+
+          content.innerHTML = '';
+          const list = ES.IDEOLOGY_DB[selCid] || [];
+
+          // Render interactive spectrum overview for all parties in this country
+          const spec = ES.spectrumWidget(
+            list.map((p) => ({ ...p, weight: 10 })),
+            { countryId: selCid, title: `${COUNTRY_LABELS[selCid] || selCid} Party Spectrum Overview (Equal Weight)`, unit: 'pts' }
+          );
+          content.appendChild(spec.el);
+
+          const tbl = el('table', { class: 'codex-table' });
+          tbl.appendChild(
+            el('thead', {}, [
+              el('tr', {}, [
+                el('th', { text: 'Party / Candidate' }),
+                el('th', { text: 'Era / Election' }),
+                el('th', { text: 'Position on Spectrum' }),
+                el('th', { text: 'Score (1–10)' }),
+                el('th', { text: 'Ideology / Tags' }),
+              ]),
+            ])
+          );
+          const tb = el('tbody');
+          list.forEach((item) => {
+            const badgeWrap = el('div', { style: { marginTop: '3px' } }, [ES.ideologyBadge(item, { countryId: selCid })]);
+            const posInput = el('input', {
+              class: 'codex-input',
+              type: 'text',
+              value: item.pos,
+              onchange: () => {
+                item.pos = posInput.value.trim() || item.pos;
+                ES.saveIdeologyOverrides();
+                badgeWrap.innerHTML = '';
+                badgeWrap.appendChild(ES.ideologyBadge(item, { countryId: selCid }));
+                spec.update(list.map((p) => ({ ...p, weight: 10 })));
+                onUpdate && onUpdate();
+              },
+            });
+            const scoreInput = el('input', {
+              class: 'codex-input',
+              type: 'number',
+              min: 1,
+              max: 10,
+              step: 0.1,
+              value: Number(item.score).toFixed(1),
+              style: { width: '68px' },
+              onchange: () => {
+                item.score = Math.max(1, Math.min(10, +scoreInput.value || 5));
+                scoreInput.value = Number(item.score).toFixed(1);
+                ES.saveIdeologyOverrides();
+                badgeWrap.innerHTML = '';
+                badgeWrap.appendChild(ES.ideologyBadge(item, { countryId: selCid }));
+                spec.update(list.map((p) => ({ ...p, weight: 10 })));
+                onUpdate && onUpdate();
+              },
+            });
+            const tagsInput = el('input', {
+              class: 'codex-input',
+              type: 'text',
+              value: item.tags,
+              onchange: () => {
+                item.tags = tagsInput.value.trim();
+                ES.saveIdeologyOverrides();
+                badgeWrap.innerHTML = '';
+                badgeWrap.appendChild(ES.ideologyBadge(item, { countryId: selCid }));
+                onUpdate && onUpdate();
+              },
+            });
+
+            tb.appendChild(
+              el('tr', {}, [
+                el('td', {}, [
+                  el('div', { style: { display: 'flex', alignItems: 'center', gap: '6px' } }, [
+                    el('span', { class: 'swatch', style: { background: item.color || '#38bdf8' } }),
+                    el('b', { text: item.short || item.id }),
+                  ]),
+                  el('div', { class: 'small muted', text: item.name }),
+                  badgeWrap,
+                ]),
+                el('td', { class: 'small muted', text: item.era || '—' }),
+                el('td', {}, [posInput]),
+                el('td', {}, [scoreInput]),
+                el('td', {}, [tagsInput]),
+              ])
+            );
+          });
+          tbl.appendChild(tb);
+          content.appendChild(tbl);
+        }
+
+        renderTab();
+      },
+      { wide: true }
+    );
+  };
+
+  /* --------------------------------------------------------------------- */
   /* App shell                                                              */
   /* --------------------------------------------------------------------- */
   ES.start = function () {
@@ -796,6 +1495,17 @@
     let current = null;
 
     if (hud) {
+      const ideoBtn = el('button', {
+        class: 'btn btn-xs',
+        style: { borderColor: 'rgba(56,189,248,0.5)', color: '#bae6fd' },
+        text: '🧭 Ideology & Spectrum',
+        title: 'Open the 11-Country Political Spectrum & Party Ideology Codex',
+        onclick: () => {
+          ES.openIdeologyModal(current ? current.id : 'hungary', () => {
+            if (current) open(current.id);
+          });
+        },
+      });
       const coalBtn = el('button', {
         class: 'btn btn-gold btn-xs',
         text: '🤝 Coalition Studio',
@@ -820,6 +1530,7 @@
           if (sfx.enabled) sfx.click(600);
         },
       });
+      hud.appendChild(ideoBtn);
       hud.appendChild(coalBtn);
       hud.appendChild(sfxBtn);
     }
@@ -829,6 +1540,7 @@
       if (!m) return;
       if (current && current.destroy) current.destroy();
       current = m;
+      ES.activeCountryId = m.id;
       nav.querySelectorAll('button').forEach((b) => b.classList.toggle('active', b.dataset.id === m.id));
       app.innerHTML = '';
       const head = el('div', { class: 'country-head' }, [
@@ -836,21 +1548,31 @@
           ES.flag(m.id, 32) || el('span', { class: 'flag', text: m.flag || '' }),
           el('div', {}, [el('h2', { text: m.title || m.name }), m.subtitle ? el('div', { class: 'muted', text: m.subtitle }) : null]),
         ]),
-        m.id !== 'usa'
-          ? el('button', {
-              class: 'btn btn-gold',
-              text: '🤝 Build Governing Coalition',
-              onclick: () => {
-                const studio = document.querySelector('.coalition');
-                if (studio) {
-                  sfx.click(660);
-                  studio.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  studio.style.boxShadow = '0 0 0 3px var(--gold), 0 0 28px rgba(245,184,46,0.6)';
-                  setTimeout(() => (studio.style.boxShadow = ''), 1600);
-                }
-              },
-            })
-          : null,
+        el('div', { class: 'row', style: { gap: '8px' } }, [
+          el('button', {
+            class: 'btn',
+            style: { borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd' },
+            text: '🧭 Party Ideologies & Spectrum',
+            onclick: () => {
+              ES.openIdeologyModal(m.id, () => open(m.id));
+            },
+          }),
+          m.id !== 'usa'
+            ? el('button', {
+                class: 'btn btn-gold',
+                text: '🤝 Build Governing Coalition',
+                onclick: () => {
+                  const studio = document.querySelector('.coalition');
+                  if (studio) {
+                    sfx.click(660);
+                    studio.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    studio.style.boxShadow = '0 0 0 3px var(--gold), 0 0 28px rgba(245,184,46,0.6)';
+                    setTimeout(() => (studio.style.boxShadow = ''), 1600);
+                  }
+                },
+              })
+            : null,
+        ]),
       ]);
       app.appendChild(head);
       const body = el('div', { class: 'country-body' });
