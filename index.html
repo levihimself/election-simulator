@@ -3,20 +3,30 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Election Simulator</title>
-  <meta name="description" content="Interactive election simulator: Hungary, Budapest, European Parliament, Germany, France, UK and USA." />
+  <title>Election Simulator – Political Strategy Sandbox</title>
+  <meta name="description" content="Interactive political strategy & election simulator: Hungary, Budapest, European Parliament, Germany, France, UK and USA." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand"><span class="logo"></span>Election Simulator</div>
+      <div class="brand">
+        <span class="logo"></span>
+        <div class="brand-text">
+          <span class="brand-title">PARLIAMENT COMMAND</span>
+          <span class="brand-sub">POLITICAL SANDBOX SIMULATOR</span>
+        </div>
+      </div>
       <nav id="country-nav"></nav>
+      <div id="hud-tools" class="hud-tools"></div>
     </div>
   </header>
   <main id="app"></main>
   <footer>
-    Simulation tool – results are projections based on simplified models of each electoral system. Baseline data is approximate and editable in <code>js/countries/*.js</code>.
+    <span>🎮 Political Strategy &amp; Election Sandbox · Click regions/constituencies, drag sliders, and form governing coalitions in real time.</span>
   </footer>
 
   <!-- libraries -->
@@ -29,6 +39,7 @@
   <script src="data/hex-uk.js"></script>
   <script src="data/uk-2024.js"></script>
   <script src="data/geo-budapest.js"></script>
+  <script src="data/geo-hungary.js"></script>
   <!-- core -->
   <script src="js/core.js"></script>
   <!-- countries (order = nav order) -->

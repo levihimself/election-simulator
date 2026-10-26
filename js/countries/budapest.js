@@ -891,16 +891,22 @@
       const candCards = el('div', { class: 'cands' });
       MAYOR_CANDS.slice(0, 2).forEach((c) => {
         const isWin = mayorOut.winner === c.id;
+        const pic = ES.leaderImg && ES.leaderImg(c.name);
         candCards.appendChild(
           el('div', { class: 'cand' + (isWin ? ' win' : ''), style: { '--c': c.color } }, [
-            el('div', { class: 'cname', text: c.name }),
-            el('div', { class: 'cparty', text: c.party }),
+            el('div', { class: 'cand-top' }, [
+              pic ? el('img', { class: 'leader-avatar-lg', src: pic, alt: c.name, style: { '--c': c.color } }) : null,
+              el('div', {}, [
+                el('div', { class: 'cname', text: c.name }),
+                el('div', { class: 'cparty', text: c.party }),
+              ]),
+            ]),
             el('div', { class: 'cval', style: { color: c.color }, text: `${fmt(mayorOut.pct[c.id], 2)}%` }),
             el('div', {
               class: 'muted small',
               text: `${fmtInt(mayorOut.votes[c.id])} votes · ${mayorOut.distWins[c.id]}/23 districts`,
             }),
-            isWin ? el('span', { class: 'badge', text: 'ELECTED LORD MAYOR (+1 SEAT)' }) : null,
+            isWin ? el('span', { class: 'badge', text: '★ ELECTED LORD MAYOR (+1 SEAT)' }) : null,
           ])
         );
       });

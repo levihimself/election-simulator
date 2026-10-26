@@ -1,10 +1,11 @@
 /* =========================================================================
    European Union – 2024 European Parliament Election (720 MEPs, 27 states)
-   Political groups without leaders; toggle countries or adjust percentages.
+   Political groups without leaders; toggle countries or toggle/edit each
+   country's group percentages directly.
    ========================================================================= */
 (function () {
   'use strict';
-  const { el, fmt, clone, sum, normalize, argmax } = ES.util;
+  const { el, fmt, clone, normalize } = ES.util;
   const ui = ES.ui;
 
   // Ordered left -> right for hemicycle
@@ -23,7 +24,6 @@
   GROUPS.forEach((g) => (GMAP[g.id] = g));
 
   // 27 EU Member States with ISO-3166 numeric id (matching GEO_WORLD), 2-letter code, total MEPs, and 2024 initial group seat breakdown (total = 720)
-  // Totals across EU27: EPP 188, SD 136, PFE 84, ECR 78, RENEW 77, GREENS 53, LEFT 46, ESN 25, NI 33
   const STATES = [
     { iso: '276', code: 'DE', name: 'Germany', seats: 96, base: { EPP: 30, SD: 14, GREENS: 16, RENEW: 8, LEFT: 4, ESN: 14, NI: 10 } },
     { iso: '250', code: 'FR', name: 'France', seats: 81, base: { PFE: 30, RENEW: 13, SD: 13, LEFT: 9, EPP: 6, GREENS: 5, ECR: 4, ESN: 1 } },
@@ -65,36 +65,56 @@
       BASE_TOTALS[g.id] += cnt;
       pct[g.id] = +((cnt / s.seats) * 100).toFixed(1);
     });
-    s.basePct = normalize(pct, 100);
+    const norm = normalize(pct, 100);
+    GROUPS.forEach((g) => (norm[g.id] = +norm[g.id].toFixed(1)));
+    s.basePct = norm;
     SMAP[s.code] = s;
     ISO_MAP[s.iso] = s;
   });
 
-  // Compute baseline EU-wide percentages (seat-weighted, normalized to exactly 100.0)
   const BASE_EU_PCT = { EPP: 26.1, SD: 18.9, PFE: 11.7, ECR: 10.8, RENEW: 10.7, GREENS: 7.4, LEFT: 6.4, ESN: 3.5, NI: 4.5 };
 
   let state = null;
   function initState() {
+    const countryPcts = {};
+    STATES.forEach((s) => (countryPcts[s.code] = clone(s.basePct)));
     state = {
+      selectedCountry: 'ALL', // 'ALL' or 2-letter state code ('DE', 'FR', 'HU', etc.)
       euPct: clone(BASE_EU_PCT),
-      allocMode: 'states', // 'states' (27 national constituencies) | 'single' (single EU-wide list)
-      clickMode: 'winner', // 'winner' (toggle country to 1 group) | 'modal' (open country % modal)
-      brush: 'EPP',        // 'modal' or group id
-      overrides: {},       // code -> { type: 'winner', group: 'EPP' } or { type: 'pct', pct: {...} }
+      countryPcts,            // live editable % for every single EU country!
+      allocMode: 'states',    // 'states' (27 national constituencies) | 'single' (single EU-wide list)
+      brush: 'select',        // 'select' (click country to edit its %), 'modal', or group id
+      overrides: {},          // code -> { type: 'winner', group: 'EPP' } or { type: 'pct' }
+      showAllCountries: true, // show the interactive 27-country percentage switcher table
     };
   }
 
-  // Compute seats for a single state
+  function applyEuSwingToCountries(newEuPct) {
+    STATES.forEach((st) => {
+      if (state.overrides[st.code]) return; // keep manually customized countries intact
+      const votes = {};
+      GROUPS.forEach((g) => {
+        const baseG = Math.max(0.5, BASE_EU_PCT[g.id]);
+        const ratio = (newEuPct[g.id] || 0) / baseG;
+        const delta = (newEuPct[g.id] || 0) - BASE_EU_PCT[g.id];
+        const baseSt = st.basePct[g.id] || 0;
+        votes[g.id] = Math.max(0, baseSt * ratio + Math.max(0, delta * 0.25));
+      });
+      const norm = normalize(votes, 100);
+      GROUPS.forEach((g) => (state.countryPcts[st.code][g.id] = +norm[g.id].toFixed(1)));
+    });
+  }
+
   function calcStateSeats(st) {
     const ov = state.overrides[st.code];
     if (ov && ov.type === 'winner') {
       const res = {};
       GROUPS.forEach((g) => (res[g.id] = g.id === ov.group ? st.seats : 0));
-      return { seats: res, pct: normalize({ [ov.group]: 100 }, 100), isOverride: true, ovType: 'winner' };
+      return { seats: res, pct: state.countryPcts[st.code], isOverride: true, ovType: 'winner' };
     }
     if (ov && ov.type === 'pct') {
-      const seats = ES.methods.dhondt(ov.pct, st.seats);
-      return { seats, pct: ov.pct, isOverride: true, ovType: 'pct' };
+      const seats = ES.methods.dhondt(state.countryPcts[st.code], st.seats);
+      return { seats, pct: state.countryPcts[st.code], isOverride: true, ovType: 'pct' };
     }
     // Check if euPct is unchanged from BASE_EU_PCT
     let unchanged = true;
@@ -107,20 +127,10 @@
     if (unchanged) {
       const res = {};
       GROUPS.forEach((g) => (res[g.id] = st.base[g.id] || 0));
-      return { seats: res, pct: st.basePct, isOverride: false };
+      return { seats: res, pct: state.countryPcts[st.code], isOverride: false };
     }
-    // Proportional swing + small additive floor so new/growing groups can win seats anywhere
-    const votes = {};
-    GROUPS.forEach((g) => {
-      const baseG = Math.max(0.5, BASE_EU_PCT[g.id]);
-      const ratio = (state.euPct[g.id] || 0) / baseG;
-      const delta = (state.euPct[g.id] || 0) - BASE_EU_PCT[g.id];
-      const baseSt = st.basePct[g.id] || 0;
-      votes[g.id] = Math.max(0, baseSt * ratio + Math.max(0, delta * 0.25));
-    });
-    const normPct = normalize(votes, 100);
-    const seats = ES.methods.dhondt(normPct, st.seats);
-    return { seats, pct: normPct, isOverride: false };
+    const seats = ES.methods.dhondt(state.countryPcts[st.code], st.seats);
+    return { seats, pct: state.countryPcts[st.code], isOverride: false };
   }
 
   function computeAll() {
@@ -149,15 +159,51 @@
     const L = ui.layout();
     root.appendChild(L.root);
 
-    /* ---- Left Column: Mode + Sliders + Presets ---- */
-    const modeCard = ui.card('Simulation Mode');
+    /* ---- Left Column: Country Percentage Toggle + Sliders + Presets ---- */
+    const modeCard = ui.card('1. Toggle Country or EU-Wide Percentages');
     L.left.appendChild(modeCard.card);
-    modeCard.body.appendChild(el('div', { class: 'muted small', style: { marginBottom: '6px' }, text: 'Seat calculation method:' }));
+
+    modeCard.body.appendChild(
+      el('div', { class: 'muted small', style: { marginBottom: '6px' }, text: 'Choose which percentages to control with the sliders below:' })
+    );
+
+    const countryOpts = [{ value: 'ALL', label: '🇪🇺 All EU-27 (EU-Wide Group Share %)' }].concat(
+      STATES.map((s) => ({ value: s.code, label: `${s.code} – ${s.name} (${s.seats} MEPs)` }))
+    );
+    const countrySelect = ui.select(countryOpts, state.selectedCountry, (v) => {
+      state.selectedCountry = v;
+      rebuildSliders();
+      update();
+    });
+    countrySelect.style.width = '100%';
+    modeCard.body.appendChild(countrySelect);
+
+    // Quick pill buttons for top/popular countries + EU-27
+    const quickCountries = el('div', { class: 'row', style: { marginTop: '8px' } });
+    [['ALL', '🇪🇺 EU-27'], ['DE', 'DE (96)'], ['FR', 'FR (81)'], ['IT', 'IT (76)'], ['ES', 'ES (61)'], ['PL', 'PL (53)'], ['HU', 'HU (21)']].forEach(([code, lbl]) => {
+      const b = el('button', {
+        class: 'btn btn-xs' + (state.selectedCountry === code ? ' active' : ''),
+        text: lbl,
+        onclick: () => {
+          state.selectedCountry = code;
+          countrySelect.value = code;
+          rebuildSliders();
+          update();
+        },
+      });
+      b.dataset.code = code;
+      quickCountries.appendChild(b);
+    });
+    modeCard.body.appendChild(quickCountries);
+
+    modeCard.body.appendChild(
+      el('div', { class: 'muted small', style: { margin: '10px 0 6px' }, text: 'Seat allocation formula:' })
+    );
     modeCard.body.appendChild(
       ui.segmented(
         [
           { value: 'states', label: '27 Member States (Constituencies)' },
-          { value: 'single', label: 'EU-wide Proportional (720)' },
+          { value: 'single', label: 'Single EU-Wide List (720)' },
         ],
         state.allocMode,
         (v) => {
@@ -167,20 +213,91 @@
       )
     );
 
-    const slCard = ui.card('EU-wide Group Share (%)');
+    const slHeaderSpan = el('span', { text: 'EU-WIDE GROUP SHARE (%)' });
+    const slCard = ui.card('2. Group Percentages');
+    slCard.card.querySelector('h3').replaceWith(slHeaderSpan);
     L.left.appendChild(slCard.card);
-    const sliders = ui.sliders(
-      GROUPS.map((g) => ({ id: g.id, name: g.short, leader: g.name, color: g.color })),
-      state.euPct,
-      {
-        max: 45,
-        step: 0.1,
-        onChange: () => update(),
-      }
-    );
-    slCard.body.appendChild(sliders.el);
+    const slContainer = el('div');
+    slCard.body.appendChild(slContainer);
 
-    const prCard = ui.card('Presets & Coalitions');
+    function rebuildSliders() {
+      quickCountries.querySelectorAll('button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.code === state.selectedCountry);
+      });
+      slContainer.innerHTML = '';
+
+      if (state.selectedCountry === 'ALL') {
+        slHeaderSpan.textContent = '🇪🇺 EU-WIDE GROUP SHARE (%) – SWINGS ALL 27 STATES';
+        const sliders = ui.sliders(
+          GROUPS.map((g) => ({ id: g.id, name: g.short, leader: g.name, color: g.color })),
+          state.euPct,
+          {
+            max: 45,
+            step: 0.1,
+            onChange: (vals) => {
+              applyEuSwingToCountries(vals);
+              update();
+            },
+          }
+        );
+        slContainer.appendChild(sliders.el);
+      } else {
+        const st = SMAP[state.selectedCountry];
+        slHeaderSpan.textContent = `🎛️ ${st.name.toUpperCase()} (${st.code}) – COUNTRY PERCENTAGES (${st.seats} MEPs)`;
+
+        const seatPreview = el('div', { class: 'note note-info', style: { marginBottom: '10px' } });
+        const refreshPreview = () => {
+          const calc = calcStateSeats(st);
+          const parts = GROUPS.filter((g) => (calc.seats[g.id] || 0) > 0).map(
+            (g) => `<b style="color:${g.color}">${g.short}: ${calc.seats[g.id]}</b>`
+          );
+          seatPreview.innerHTML = `<b>${st.name} (${st.seats} MEPs):</b> ` + (parts.join(' · ') || '–');
+        };
+
+        const cSliders = ui.sliders(
+          GROUPS.map((g) => ({ id: g.id, name: g.short, leader: g.name, color: g.color })),
+          state.countryPcts[st.code],
+          {
+            max: 75,
+            step: 0.5,
+            onChange: () => {
+              state.overrides[st.code] = { type: 'pct' };
+              refreshPreview();
+              update();
+            },
+          }
+        );
+        refreshPreview();
+        slContainer.appendChild(seatPreview);
+        slContainer.appendChild(cSliders.el);
+        slContainer.appendChild(
+          el('div', { class: 'row', style: { marginTop: '10px', justifyContent: 'space-between' } }, [
+            el('button', {
+              class: 'btn btn-xs',
+              text: `Reset ${st.name} to 2024 Result`,
+              onclick: () => {
+                state.countryPcts[st.code] = clone(st.basePct);
+                delete state.overrides[st.code];
+                rebuildSliders();
+                update();
+              },
+            }),
+            el('button', {
+              class: 'btn btn-xs btn-primary',
+              text: '← Back to EU-27 Sliders',
+              onclick: () => {
+                state.selectedCountry = 'ALL';
+                countrySelect.value = 'ALL';
+                rebuildSliders();
+                update();
+              },
+            }),
+          ])
+        );
+      }
+    }
+
+    const prCard = ui.card('Presets & Actions');
     L.left.appendChild(prCard.card);
     prCard.body.appendChild(
       el('div', { class: 'row' }, [
@@ -188,16 +305,19 @@
           class: 'btn',
           text: '2024 Election Result',
           onclick: () => {
-            state.overrides = {};
-            sliders.setValues(clone(BASE_EU_PCT));
+            initState();
+            countrySelect.value = 'ALL';
+            rebuildSliders();
             update();
           },
         }),
         el('button', {
           class: 'btn',
-          text: 'Clear Country Overrides',
+          text: 'Clear All Country Overrides',
           onclick: () => {
             state.overrides = {};
+            applyEuSwingToCountries(state.euPct);
+            rebuildSliders();
             update();
           },
         }),
@@ -205,12 +325,12 @@
     );
     prCard.body.appendChild(
       ui.note(
-        'In European Parliament elections, each of the 27 member states acts as a constituency (from 6 MEPs in Malta, Luxembourg and Cyprus up to 96 in Germany). Toggle countries on the map to assign them to a political group, or click a country in <b>Edit %</b> mode to customize its national group breakdown.'
+        'Select any country from the dropdown, click a country on the map, or click any row in the <b>27 Member States Table</b> to toggle and customize that country\'s political group percentages!'
       )
     );
 
-    /* ---- Right Column: Map + Hemicycle + Table + Coalition ---- */
-    const mapCard = ui.card('Member States Map – Toggle Country or Edit Breakdown');
+    /* ---- Right Column: Map + Country % Switcher + Hemicycle + Table ---- */
+    const mapCard = ui.card('Member States Map – Click to Edit Country % or Paint Winner');
     L.right.appendChild(mapCard.card);
 
     const toolbar = el('div', { class: 'map-toolbar' });
@@ -218,7 +338,7 @@
       const b = el(
         'button',
         { class: 'paint-chip' + (state.brush === id ? ' active' : ''), style: { '--c': color } },
-        [id !== 'modal' ? el('span', { class: 'swatch', style: { background: color } }) : null, label]
+        [id !== 'select' && id !== 'modal' ? el('span', { class: 'swatch', style: { background: color } }) : null, label]
       );
       b.addEventListener('click', () => {
         state.brush = id;
@@ -227,12 +347,19 @@
       });
       return b;
     };
-    toolbar.appendChild(makeBrush('modal', '🔍 Inspect / Edit Country %', '#5b8cff'));
+    toolbar.appendChild(makeBrush('select', '🎛️ Click Country → Toggle Country % Sliders', '#4e86ff'));
+    toolbar.appendChild(makeBrush('modal', '🔍 Popup Modal Editor', '#00d4ff'));
     GROUPS.forEach((g) => toolbar.appendChild(makeBrush(g.id, g.short, g.color)));
     mapCard.body.appendChild(toolbar);
 
     const mapWrap = el('div', { class: 'map-wrap' });
     mapCard.body.appendChild(mapWrap);
+
+    // Interactive 27-Country Percentage Switcher strip/table
+    const cListCard = ui.card('All 27 EU Countries – Click Any Country to Toggle its Percentages');
+    L.right.appendChild(cListCard.card);
+    const cListBox = el('div');
+    cListCard.body.appendChild(cListBox);
 
     const hcCard = ui.card('European Parliament Hemicycle (720 MEPs · Majority: 361)');
     L.right.appendChild(hcCard.card);
@@ -250,7 +377,7 @@
 
     /* ---- Build Europe SVG Map ---- */
     const tip = ui.tooltip();
-    const W = 860, H = 520;
+    const W = 860, H = 500;
     const svg = d3.select(mapWrap).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
     const worldFeatures = topojson.feature(GEO_WORLD, GEO_WORLD.objects.countries).features;
 
@@ -260,20 +387,17 @@
       .translate([W * 0.46, H * 0.54]);
     const path = d3.geoPath(proj);
 
-    // Background ocean
-    svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#141923').attr('rx', 10);
+    svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#0d121c').attr('rx', 10);
 
-    // Non-EU background countries
     svg.append('g')
       .selectAll('path')
       .data(worldFeatures.filter((f) => !ISO_MAP[f.id]))
       .join('path')
       .attr('d', path)
-      .attr('fill', '#232936')
-      .attr('stroke', '#141923')
+      .attr('fill', '#1c2436')
+      .attr('stroke', '#0d121c')
       .attr('stroke-width', 0.5);
 
-    // EU-27 member states
     const euFeatures = worldFeatures.filter((f) => ISO_MAP[f.id]);
     const countryPaths = svg.append('g')
       .selectAll('path')
@@ -286,7 +410,6 @@
       .on('mousemove', (e) => tip.move(e))
       .on('mouseleave', () => tip.hide());
 
-    // Labels for EU member states on map
     const SMALL_CODES = ['MT', 'LU', 'CY', 'BE', 'NL', 'SI', 'EE'];
     svg.append('g')
       .selectAll('text')
@@ -305,9 +428,8 @@
       })
       .text((d) => `${ISO_MAP[d.id].code} (${ISO_MAP[d.id].seats})`);
 
-    // Side boxes for smaller member states so all 27 are effortless to click
     const sideStates = STATES.filter((s) => SMALL_CODES.includes(s.code));
-    const bx = W - 115, by0 = 24, bh = 28;
+    const bx = W - 118, by0 = 22, bh = 28;
     const boxG = svg.append('g')
       .selectAll('g')
       .data(sideStates)
@@ -315,7 +437,7 @@
       .attr('transform', (d, i) => `translate(${bx},${by0 + i * (bh + 5)})`);
     const boxRects = boxG.append('rect')
       .attr('class', 'unit')
-      .attr('width', 100)
+      .attr('width', 104)
       .attr('height', bh)
       .attr('rx', 5)
       .on('click', (e, d) => handleCountryClick(d))
@@ -323,22 +445,30 @@
       .on('mousemove', (e) => tip.move(e))
       .on('mouseleave', () => tip.hide());
     boxG.append('text')
-      .attr('x', 50)
+      .attr('x', 52)
       .attr('y', bh / 2 + 1)
       .text((d) => `${d.code} · ${d.name} (${d.seats})`);
 
     let lastCalc = null;
 
     function handleCountryClick(st) {
-      if (state.brush === 'modal') {
+      if (state.brush === 'select') {
+        state.selectedCountry = st.code;
+        countrySelect.value = st.code;
+        rebuildSliders();
+        update();
+      } else if (state.brush === 'modal') {
         openCountryModal(st);
       } else {
         const cur = state.overrides[st.code];
         if (cur && cur.type === 'winner' && cur.group === state.brush) {
           delete state.overrides[st.code];
+          state.countryPcts[st.code] = clone(st.basePct);
         } else {
           state.overrides[st.code] = { type: 'winner', group: state.brush };
+          GROUPS.forEach((g) => (state.countryPcts[st.code][g.id] = g.id === state.brush ? 100 : 0));
         }
+        if (state.selectedCountry === st.code) rebuildSliders();
         update();
       }
     }
@@ -346,21 +476,19 @@
     function showCountryTip(e, st) {
       if (!lastCalc) return;
       const r = lastCalc.byState[st.code];
-      const rows = GROUPS.filter((g) => (r.seats[g.id] || 0) > 0)
-        .sort((a, b) => r.seats[b.id] - r.seats[a.id])
-        .map((g) => `<tr><td><span style="color:${g.color}">■</span> ${g.short}</td><td style="text-align:right"><b>${r.seats[g.id]}</b></td><td style="text-align:right;color:#9aa3b5">${fmt(r.pct[g.id] || 0)}%</td></tr>`)
+      const rows = GROUPS.filter((g) => (r.seats[g.id] || 0) > 0 || (r.pct[g.id] || 0) >= 2)
+        .sort((a, b) => (r.seats[b.id] || 0) - (r.seats[a.id] || 0) || (r.pct[b.id] || 0) - (r.pct[a.id] || 0))
+        .map((g) => `<tr><td><span style="color:${g.color}">■</span> ${g.short}</td><td style="text-align:right"><b>${r.seats[g.id] || 0}</b> MEPs</td><td style="text-align:right;color:#9aa3b5">${fmt(r.pct[g.id] || 0)}%</td></tr>`)
         .join('');
       tip.show(
         e,
-        `<b>${st.name} (${st.code})</b> · ${st.seats} MEPs${r.isOverride ? ' <span style="color:#ffb547">(Custom)</span>' : ''}<table>${rows}</table><div class="muted small" style="margin-top:4px">Click to ${state.brush === 'modal' ? 'edit country breakdown' : 'toggle to ' + GMAP[state.brush].short}</div>`
+        `<b>${st.name} (${st.code})</b> · ${st.seats} MEPs${r.isOverride ? ' <span style="color:#ffb547">(Custom)</span>' : ''}<table>${rows}</table><div class="muted small" style="margin-top:4px">Click to ${state.brush === 'select' ? 'load ' + st.name + ' % sliders on left' : state.brush === 'modal' ? 'open popup editor' : 'assign all seats to ' + GMAP[state.brush].short}</div>`
       );
     }
 
     function openCountryModal(st) {
-      const cur = lastCalc.byState[st.code];
-      const localPct = clone(cur.pct);
-      ui.modal(`${st.name} (${st.seats} MEPs)`, (body, close) => {
-        body.appendChild(el('div', { class: 'muted small', text: 'Quickly assign all seats of this member state to one political group, or fine-tune group vote shares below (allocated by D\'Hondt):' }));
+      ui.modal(`${st.name} (${st.seats} MEPs) – Country Group %`, (body, close) => {
+        body.appendChild(el('div', { class: 'muted small', text: 'Assign all seats of this member state to one group, or adjust its group vote shares below (allocated by D\'Hondt):' }));
         const quickRow = el('div', { class: 'row' });
         GROUPS.forEach((g) => {
           const b = el('button', { class: 'chip', style: { '--c': g.color } }, [
@@ -369,6 +497,8 @@
           ]);
           b.addEventListener('click', () => {
             state.overrides[st.code] = { type: 'winner', group: g.id };
+            GROUPS.forEach((x) => (state.countryPcts[st.code][x.id] = x.id === g.id ? 100 : 0));
+            rebuildSliders();
             update();
             close();
           });
@@ -378,19 +508,20 @@
 
         const previewEl = el('div', { class: 'note note-info' });
         function refreshPreview() {
-          const s = ES.methods.dhondt(localPct, st.seats);
+          const s = ES.methods.dhondt(state.countryPcts[st.code], st.seats);
           const parts = GROUPS.filter((g) => s[g.id] > 0).map((g) => `<b style="color:${g.color}">${g.short}: ${s[g.id]}</b>`);
           previewEl.innerHTML = `Projected seats (${st.seats}): ` + (parts.join(' · ') || '–');
         }
         const mSliders = ui.sliders(
           GROUPS.map((g) => ({ id: g.id, name: g.short, leader: g.name, color: g.color })),
-          localPct,
+          state.countryPcts[st.code],
           {
-            max: 70,
+            max: 75,
             step: 0.5,
             onChange: () => {
-              state.overrides[st.code] = { type: 'pct', pct: clone(localPct) };
+              state.overrides[st.code] = { type: 'pct' };
               refreshPreview();
+              rebuildSliders();
               update();
             },
           }
@@ -403,9 +534,11 @@
           el('div', { class: 'row', style: { justifyContent: 'space-between', marginTop: '8px' } }, [
             el('button', {
               class: 'btn',
-              text: 'Reset Country to Baseline',
+              text: 'Reset Country to 2024 Result',
               onclick: () => {
+                state.countryPcts[st.code] = clone(st.basePct);
                 delete state.overrides[st.code];
+                rebuildSliders();
                 update();
                 close();
               },
@@ -434,14 +567,46 @@
       countryPaths
         .attr('fill', (d) => {
           const st = ISO_MAP[d.id];
-          const g = dominantGroup(byState[st.code].seats);
-          return g.color;
+          return dominantGroup(byState[st.code].seats).color;
         })
-        .classed('override', (d) => byState[ISO_MAP[d.id].code].isOverride);
+        .classed('override', (d) => byState[ISO_MAP[d.id].code].isOverride || state.selectedCountry === ISO_MAP[d.id].code);
 
       boxRects
         .attr('fill', (d) => dominantGroup(byState[d.code].seats).color)
-        .classed('override', (d) => byState[d.code].isOverride);
+        .classed('override', (d) => byState[d.code].isOverride || state.selectedCountry === d.code);
+
+      // Render interactive 27-country cards/pills so user can toggle any country's percentages with 1 click
+      cListBox.innerHTML = '';
+      const grid = el('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(155px, 1fr))', gap: '6px' } });
+      STATES.forEach((st) => {
+        const r = byState[st.code];
+        const dom = dominantGroup(r.seats);
+        const topPct = fmt(r.pct[dom.id] || 0, 0);
+        const isSel = state.selectedCountry === st.code;
+        const btn = el(
+          'button',
+          {
+            class: 'coal-card' + (isSel ? ' on' : ''),
+            style: { '--c': dom.color },
+            onclick: () => {
+              state.selectedCountry = st.code;
+              countrySelect.value = st.code;
+              rebuildSliders();
+              update();
+            },
+          },
+          [
+            el('span', { class: 'swatch', style: { background: dom.color } }),
+            el('div', { class: 'coal-card-info' }, [
+              el('span', { class: 'coal-card-name', text: `${st.code} · ${st.name}` }),
+              el('span', { class: 'coal-card-sub', text: `${dom.short} ${topPct}%${r.isOverride ? ' · Custom' : ''}` }),
+            ]),
+            el('span', { class: 'coal-card-seats', style: { color: dom.color }, text: st.seats }),
+          ]
+        );
+        grid.appendChild(btn);
+      });
+      cListBox.appendChild(grid);
 
       const hcParties = GROUPS.map((g) => ({
         id: g.id,
@@ -456,7 +621,7 @@
       barBox.appendChild(ui.seatBar(hcParties, 720, 361, { label: '361 MEPs required for an absolute majority', unit: 'MEPs' }));
 
       coalBox.innerHTML = '';
-      coalBox.appendChild(ui.coalition(hcParties, 720, 361));
+      coalBox.appendChild(ui.coalition(hcParties, 720, 361, { key: 'eu-720' }));
 
       const rows = GROUPS.map((g) => {
         const s = totalSeats[g.id] || 0;
@@ -487,6 +652,7 @@
       );
     }
 
+    rebuildSliders();
     update();
   }
 
@@ -495,7 +661,7 @@
     name: 'EU',
     flag: '🇪🇺',
     title: 'European Union – 2024 European Parliament Election',
-    subtitle: '720 MEPs · 27 Member States · Political groups without leaders',
+    subtitle: '720 MEPs · 27 Member States · Toggle Countries or Edit Country Percentages',
     render,
   });
 })();

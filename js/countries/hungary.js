@@ -817,10 +817,10 @@
     hcCard.body.appendChild(hcBox);
     hcCard.body.appendChild(seatBarBox);
 
-    // 2. Constituencies (OEVK) Interactive Tile Grid Card
+    // 2. Interactive Hungary Geographic Map + Constituencies (OEVK) Tile Grid Card
     const overrideBadge = el('span', { class: 'badge out', text: '0 custom overrides' });
     const mapCard = ui.card(
-      `Single-Member Constituencies (${scen.smcTotal} OEVKs · Budapest + 19 Counties)`,
+      `Hungary Map & Single-Member Constituencies (${scen.smcTotal} OEVKs · Budapest + 19 Counties)`,
       '',
       overrideBadge
     );
@@ -831,7 +831,7 @@
     const brushItems = [
       { id: 'inspect', label: '🔍 Inspect / Edit Constituency %', color: '#5b8cff' },
       ...partiesByVote.map((p) => ({ id: p.id, label: `Paint: ${p.short}`, color: p.color })),
-      { id: 'reset', label: '↺ Reset Tile', color: '#9aa3b5' },
+      { id: 'reset', label: '↺ Reset Tile / County', color: '#9aa3b5' },
     ];
     brushItems.forEach((b) => {
       const chip = el(
@@ -856,12 +856,118 @@
     });
     mapCard.body.appendChild(toolbar);
 
+    // Interactive Geographic SVG Map of Hungary (19 Counties + Budapest + OEVK nodes)
+    const geoMapWrap = el('div', { class: 'map-wrap', style: { marginBottom: '14px' } });
+    mapCard.body.appendChild(geoMapWrap);
+
+    const countyNameToCode = {};
+    const countyCodeToName = {};
+    COUNTIES.forEach(([code, cname]) => {
+      countyNameToCode[cname] = code;
+      countyCodeToName[code] = cname;
+    });
+
+    const tip = ui.tooltip();
+    let huCountyPaths = null;
+    const huSeatCircles = {};
+
+    if (window.GEO_HU && window.d3) {
+      const W = 820, H = 450;
+      const svg = d3.select(geoMapWrap).append('svg').attr('viewBox', `0 0 ${W} ${H}`);
+      svg.append('rect').attr('width', W).attr('height', H).attr('fill', '#0d1320').attr('rx', 10);
+
+      const proj = d3.geoMercator().fitExtent([[18, 18], [W - 18, H - 18]], window.GEO_HU);
+      const pathGen = d3.geoPath(proj);
+
+      // Sort features so Budapest is drawn on top of Pest county
+      const features = window.GEO_HU.features.slice().sort((a, b) =>
+        a.properties.name === 'Budapest' ? 1 : b.properties.name === 'Budapest' ? -1 : 0
+      );
+
+      huCountyPaths = svg.append('g')
+        .selectAll('path')
+        .data(features)
+        .join('path')
+        .attr('class', 'unit')
+        .attr('d', pathGen)
+        .attr('stroke', '#0b0e16')
+        .attr('stroke-width', (d) => (d.properties.name === 'Budapest' ? 1.6 : 1.1))
+        .on('click', (e, d) => {
+          const code = countyNameToCode[d.properties.name];
+          if (code) onCountyMapClick(code);
+        })
+        .on('mouseenter', (e, d) => {
+          const code = countyNameToCode[d.properties.name];
+          if (code) showCountyTooltip(e, code);
+        })
+        .on('mousemove', (e) => tip.move(e))
+        .on('mouseleave', () => tip.hide());
+
+      // Place constituency dots + county labels inside each county polygon
+      const nodeLayer = svg.append('g');
+      const labelLayer = svg.append('g');
+
+      features.forEach((f) => {
+        const cname = f.properties.name;
+        const code = countyNameToCode[cname];
+        if (!code) return;
+        const ctrs = pathGen.centroid(f);
+        let cx = ctrs[0], cy = ctrs[1];
+        // Offset Pest county centroid slightly southeast so it doesn't overlap Budapest
+        if (code === 'PE') { cx += 24; cy += 22; }
+        if (code === 'BP') { cx -= 2; cy -= 2; }
+
+        const countyConsts = data.constituencies.filter((c) => c.code === code);
+        const n = countyConsts.length;
+        const rRing = code === 'BP' ? 15 : n > 8 ? 22 : n > 4 ? 17 : 13;
+
+        countyConsts.forEach((c, idx) => {
+          let x = cx, y = cy;
+          if (n === 1) {
+            x = cx; y = cy;
+          } else if (code === 'BP' && n > 10) {
+            const ring = idx < 6 ? 9 : 19;
+            const countInRing = idx < 6 ? 6 : n - 6;
+            const iRing = idx < 6 ? idx : idx - 6;
+            const ang = (2 * Math.PI * iRing) / countInRing - Math.PI / 2;
+            x = cx + Math.cos(ang) * ring;
+            y = cy + Math.sin(ang) * ring;
+          } else {
+            const ang = (2 * Math.PI * idx) / n - Math.PI / 2;
+            x = cx + Math.cos(ang) * rRing;
+            y = cy + Math.sin(ang) * (rRing * 0.78);
+          }
+          const circle = nodeLayer.append('circle')
+            .attr('class', 'unit')
+            .attr('cx', x.toFixed(1))
+            .attr('cy', y.toFixed(1))
+            .attr('r', code === 'BP' ? 4.2 : 5.5)
+            .attr('stroke', '#0b0e16')
+            .attr('stroke-width', 1)
+            .on('click', (e) => {
+              e.stopPropagation();
+              onTileClick(c.id);
+            })
+            .on('mouseenter', (e) => showTileTooltip(e, c.id))
+            .on('mousemove', (e) => tip.move(e))
+            .on('mouseleave', () => tip.hide());
+          huSeatCircles[c.id] = circle;
+        });
+
+        labelLayer.append('text')
+          .attr('x', cx.toFixed(1))
+          .attr('y', (cy - (code === 'BP' ? 24 : rRing + 9)).toFixed(1))
+          .style('font-size', code === 'BP' ? '10px' : '9.5px')
+          .text(cname === 'Csongrád-Csanád' ? 'Csongrád' : cname === 'Borsod-Abaúj-Zemplén' ? 'Borsod' : cname === 'Szabolcs-Szatmár-Bereg' ? 'Szabolcs' : cname === 'Győr-Moson-Sopron' ? 'Győr-M.-S.' : cname === 'Jász-Nagykun-Szolnok' ? 'Jász-N.-Sz.' : cname === 'Komárom-Esztergom' ? 'Komárom' : cname);
+      });
+    }
+
     const countyGridEl = el('div', { class: 'hu-county-grid' });
     mapCard.body.appendChild(countyGridEl);
 
-    const tip = ui.tooltip();
     const tileEls = {};
     const countyHeaderSeatEls = {};
+    const countyBoxes = {};
 
     // Build county boxes and constituency tiles once; update fills dynamically
     COUNTIES.forEach(([code, cname]) => {
@@ -870,8 +976,9 @@
       countyHeaderSeatEls[code] = countLabel;
 
       const box = el('div', { class: 'hu-county-box' });
+      countyBoxes[code] = box;
       box.appendChild(
-        el('div', { class: 'hu-county-head' }, [
+        el('div', { class: 'hu-county-head', style: { cursor: 'pointer' }, onclick: () => onCountyMapClick(code) }, [
           el('span', { text: `${cname} (${countyConsts.length})` }),
           countLabel,
         ])
@@ -901,11 +1008,72 @@
 
     let lastSim = null;
 
+    function showCountyTooltip(e, code) {
+      if (!lastSim) return;
+      const cname = countyCodeToName[code] || code;
+      const cResults = lastSim.constResults.filter((x) => x.c.code === code);
+      if (!cResults.length) return;
+      const seatCounts = {};
+      const avgPcts = {};
+      lastSim.parties.forEach((p) => { seatCounts[p.id] = 0; avgPcts[p.id] = 0; });
+      cResults.forEach((cr) => {
+        seatCounts[cr.winner] = (seatCounts[cr.winner] || 0) + 1;
+        lastSim.parties.forEach((p) => {
+          avgPcts[p.id] += (cr.pcts[p.id] || 0) / cResults.length;
+        });
+      });
+      const rowsHtml = ranked(avgPcts)
+        .slice(0, 5)
+        .map(([pid, pct]) => {
+          const p = lastSim.pMap[pid];
+          if (!p) return '';
+          return `<tr>
+            <td><span style="color:${p.color}">■</span> ${p.short}</td>
+            <td style="text-align:right"><b>${seatCounts[pid] || 0}</b>/${cResults.length} OEVK</td>
+            <td style="text-align:right;color:#9aa3b5">${fmt(pct, 1)}%</td>
+          </tr>`;
+        })
+        .join('');
+      tip.show(
+        e,
+        `<b>${cname}</b> (${cResults.length} constituencies)<table>${rowsHtml}</table>` +
+          `<div class="muted small" style="margin-top:4px">${state.brush === 'inspect' ? 'Click county to inspect or click OEVK circle' : 'Click county to assign all ' + cResults.length + ' seats'}</div>`
+      );
+    }
+
+    function onCountyMapClick(code) {
+      const cList = data.constituencies.filter((c) => c.code === code);
+      if (state.brush === 'reset') {
+        cList.forEach((c) => {
+          delete state.winnerOverrides[c.id];
+          delete state.customPcts[c.id];
+        });
+        updateAll();
+        return;
+      }
+      if (state.brush !== 'inspect') {
+        cList.forEach((c) => {
+          state.winnerOverrides[c.id] = state.brush;
+          delete state.customPcts[c.id];
+        });
+        updateAll();
+        return;
+      }
+      const box = countyBoxes[code];
+      if (box) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        box.style.boxShadow = '0 0 0 2px var(--gold)';
+        setTimeout(() => (box.style.boxShadow = ''), 1400);
+      }
+    }
+
     function showTileTooltip(e, cid) {
       if (!lastSim) return;
       const cr = lastSim.constResults.find((x) => x.c.id === cid);
       if (!cr) return;
       const winP = lastSim.pMap[cr.winner];
+      const pic = ES.leaderImg && ES.leaderImg(winP.leader);
+      const imgHtml = pic ? `<img src="${pic}" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid ${winP.color};float:left;margin-right:8px;" />` : '';
       const rowsHtml = ranked(cr.pcts)
         .slice(0, 6)
         .map(([pid, pct]) => {
@@ -920,10 +1088,10 @@
         .join('');
       tip.show(
         e,
-        `<b>${cr.c.name}</b>${cr.isOverride ? ' <span style="color:#ffb547">(Custom Override)</span>' : ''}<br>` +
-          `Winner: <b style="color:${winP.color}">${winP.short}</b> (${winP.leader}) · Margin: <b>+${fmt(cr.margin, 1)}%</b>` +
+        `<div style="overflow:hidden">${imgHtml}<b>${cr.c.name}</b>${cr.isOverride ? ' <span style="color:#ffb547">(Custom)</span>' : ''}<br>` +
+          `Winner: <b style="color:${winP.color}">${winP.short}</b> (${winP.leader}) · <b>+${fmt(cr.margin, 1)}%</b></div>` +
           `<table>${rowsHtml}</table>` +
-          `<div class="muted small" style="margin-top:4px">Click tile to edit constituency % or override winner</div>`
+          `<div class="muted small" style="margin-top:4px">Click to edit constituency % or override winner</div>`
       );
     }
 
@@ -1016,7 +1184,7 @@
       const majority = Math.floor(total / 2) + 1;
       const superMaj = Math.ceil((total * 2) / 3);
 
-      // 1. Update Top Candidate Cards (top 3 parties by seats/votes)
+      // 1. Update Top Candidate Cards (top 3 parties by seats/votes, with Leader Portraits!)
       candBox.innerHTML = '';
       const sortedParties = [...scen.parties].sort(
         (a, b) => (sim.totalSeatsByParty[b.id] || 0) - (sim.totalSeatsByParty[a.id] || 0) || (sim.natPct[b.id] || 0) - (sim.natPct[a.id] || 0)
@@ -1028,16 +1196,22 @@
         const lst = sim.listSeats[p.id] || 0;
         const isSuper = seats >= superMaj;
         const isMaj = seats >= majority;
+        const pic = ES.leaderImg && ES.leaderImg(p.leader);
         topCards.appendChild(
           el('div', { class: 'cand' + (isMaj ? ' win' : ''), style: { '--c': p.color } }, [
-            el('div', { class: 'cname', text: p.leader }),
-            el('div', { class: 'cparty', text: `${p.name} · ${fmt(sim.natPct[p.id], 1)}% list` }),
+            el('div', { class: 'cand-top' }, [
+              pic ? el('img', { class: 'leader-avatar-lg', src: pic, alt: p.leader, style: { '--c': p.color } }) : null,
+              el('div', {}, [
+                el('div', { class: 'cname', text: p.leader }),
+                el('div', { class: 'cparty', text: `${p.name} · ${fmt(sim.natPct[p.id], 1)}% list` }),
+              ]),
+            ]),
             el('div', { class: 'cval', style: { color: p.color }, text: `${seats} seats` }),
             el('div', { class: 'muted small', text: `${smc} SMC + ${lst} List (${fmt((seats / total) * 100, 1)}%)` }),
             isSuper
-              ? el('span', { class: 'badge', text: '⅔ CONSTITUTIONAL SUPERMAJORITY' })
+              ? el('span', { class: 'badge', style: { background: 'var(--gold)', color: '#111' }, text: '★ ⅔ CONSTITUTIONAL SUPERMAJORITY' })
               : isMaj
-              ? el('span', { class: 'badge', text: 'ABSOLUTE MAJORITY' })
+              ? el('span', { class: 'badge', text: '✔ ABSOLUTE MAJORITY' })
               : null,
           ])
         );
@@ -1093,23 +1267,39 @@
       }
       seatBarBox.appendChild(sbEl);
 
-      // 4. Update Constituency Tiles & County summaries
+      // 4. Update Hungary Geographic Map + Constituency Tiles & County summaries
       let overrideCount = 0;
       const countyWinCounts = {};
       sim.constResults.forEach((cr) => {
-        const t = tileEls[cr.c.id];
-        if (!t) return;
         const winP = sim.pMap[cr.winner];
         const strength = Math.min(1, 0.48 + (cr.margin / 24) * 0.52);
         const bg = shade(winP.color, strength);
-        t.style.background = bg;
-        t.style.color = textOn(bg);
-        t.classList.toggle('override', cr.isOverride);
+
+        const t = tileEls[cr.c.id];
+        if (t) {
+          t.style.background = bg;
+          t.style.color = textOn(bg);
+          t.classList.toggle('override', cr.isOverride);
+        }
+        const circ = huSeatCircles[cr.c.id];
+        if (circ) {
+          circ.attr('fill', winP.color).classed('override', cr.isOverride);
+        }
         if (cr.isOverride) overrideCount++;
 
         countyWinCounts[cr.c.code] = countyWinCounts[cr.c.code] || {};
         countyWinCounts[cr.c.code][cr.winner] = (countyWinCounts[cr.c.code][cr.winner] || 0) + 1;
       });
+
+      if (huCountyPaths) {
+        huCountyPaths.attr('fill', (d) => {
+          const code = countyNameToCode[d.properties.name];
+          const cw = countyWinCounts[code] || {};
+          const topPid = argmax(cw);
+          const winP = sim.pMap[topPid] || sortedParties[0];
+          return shade(winP.color, 0.58);
+        });
+      }
 
       overrideBadge.textContent =
         overrideCount > 0 ? `${overrideCount} custom override${overrideCount > 1 ? 's' : ''}` : 'Model baseline';
@@ -1183,7 +1373,8 @@
       const coalParties = sortedParties.map((p) => ({
         id: p.id,
         name: p.name,
-        short: `${p.short} – ${p.leader.split('/')[0].trim()}`,
+        short: p.short,
+        leader: p.leader.split('/')[0].trim(),
         color: p.color,
         seats: sim.totalSeatsByParty[p.id] || 0,
       }));
@@ -1191,15 +1382,13 @@
         coalParties.push({
           id: 'MNOO',
           name: 'MNOÖ',
-          short: 'MNOÖ (German Minority)',
+          short: 'MNOÖ',
+          leader: 'German Minority',
           color: '#94a3b8',
           seats: 1,
         });
       }
-      const coalWidget = ui.coalition(coalParties, total, majority);
-      const firstChip = coalWidget.querySelector('.chip');
-      if (firstChip) firstChip.click();
-      coalCard.body.appendChild(coalWidget);
+      coalCard.body.appendChild(ui.coalition(coalParties, total, majority, { key: 'hu-' + state.scenId }));
     }
 
     updateAll();
