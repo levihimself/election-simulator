@@ -584,12 +584,12 @@
       const head = util.el('div', { class: 'spectrum-head' }, [
         util.el('div', { class: 'spectrum-title', html: `🧭 ${opts.title || 'Political Spectrum Compass'} <span class="muted" style="font-size:11px;font-weight:500;text-transform:none">(1.0 Left → 10.0 Right)</span>` }),
         util.el('div', { class: 'spectrum-blocs' }, [
-          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#fda4af' }, html: `Left: <b>${fmtW(leftW)}</b>` }),
-          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#fef08a' }, html: `Centre: <b>${fmtW(centreW)}</b>` }),
-          util.el('span', { class: 'spectrum-bloc-pill', style: { color: '#93c5fd' }, html: `Right: <b>${fmtW(rightW)}</b>` }),
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: 'var(--bad)' }, html: `Left: <b>${fmtW(leftW)}</b>` }),
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: 'var(--gold)' }, html: `Centre: <b>${fmtW(centreW)}</b>` }),
+          util.el('span', { class: 'spectrum-bloc-pill', style: { color: 'var(--accent)' }, html: `Right: <b>${fmtW(rightW)}</b>` }),
           util.el('span', {
             class: 'spectrum-bloc-pill',
-            style: { borderColor: 'rgba(245,184,46,0.5)', color: 'var(--gold)' },
+            style: { borderColor: 'var(--gold)', color: 'var(--gold)' },
             html: `⚖️ Avg: <b>${cog.toFixed(1)}</b> (${ES.scoreToLabel(cog)})`,
           }),
         ]),
@@ -741,7 +741,7 @@
         c.setAttribute('cx', cx + Math.cos(st.ang) * st.r * R);
         c.setAttribute('cy', cy - Math.sin(st.ang) * st.r * R);
         c.setAttribute('r', seatR);
-        c.setAttribute('fill', '#283246');
+        c.setAttribute('fill', 'var(--track-bg, #d8e2ef)');
         svg.appendChild(c);
       }
     }
@@ -885,7 +885,7 @@
       };
       const fill = () => {
         const pct = (Math.min(values[p.id] || 0, max) / max) * 100;
-        range.style.background = `linear-gradient(90deg, ${p.color} ${pct}%, #252f42 ${pct}%)`;
+        range.style.background = `linear-gradient(90deg, ${p.color} ${pct}%, var(--track-bg, #d8e2ef) ${pct}%)`;
       };
       range.addEventListener('input', () => set(range.value, range));
       num.addEventListener('change', () => set(num.value, num));
@@ -1239,12 +1239,12 @@
         const span = maxS - minS;
         const cohesionHtml =
           scored.length === 1
-            ? '<span style="color:#4ade80;font-weight:700">🟢 Single-Party Cohesion (Span 0.0)</span>'
+            ? '<span style="color:var(--ok);font-weight:700">🟢 Single-Party Cohesion (Span 0.0)</span>'
             : span <= 1.8
-            ? `<span style="color:#4ade80;font-weight:700">🟢 High Ideological Cohesion (Span ${span.toFixed(1)})</span>`
+            ? `<span style="color:var(--ok);font-weight:700">🟢 High Ideological Cohesion (Span ${span.toFixed(1)})</span>`
             : span <= 3.5
-            ? `<span style="color:#facc15;font-weight:700">🟡 Moderate Compromise Coalition (Span ${span.toFixed(1)})</span>`
-            : `<span style="color:#fb923c;font-weight:700">🟠 Cross-Spectrum Tension (Span ${span.toFixed(1)})</span>`;
+            ? `<span style="color:var(--warn);font-weight:700">🟡 Moderate Compromise Coalition (Span ${span.toFixed(1)})</span>`
+            : `<span style="color:var(--bad);font-weight:700">🟠 Cross-Spectrum Tension (Span ${span.toFixed(1)})</span>`;
         ideoBar.innerHTML = `
           <div>🧭 Coalition Orientation: <b style="color:var(--gold)">${ES.scoreToLabel(avgScore)}</b> <span class="muted">(Weighted Score: <b>${avgScore.toFixed(1)} / 10</b>)</span></div>
           <div>${cohesionHtml}</div>
@@ -1493,7 +1493,7 @@
   };
 
   /* --------------------------------------------------------------------- */
-  /* App shell                                                              */
+  /* App shell & Theme Switcher (Light Faded Blue-Gray-White / Dark Mode)   */
   /* --------------------------------------------------------------------- */
   ES.start = function () {
     const nav = document.getElementById('country-nav');
@@ -1501,10 +1501,36 @@
     const app = document.getElementById('app');
     let current = null;
 
+    let theme = 'light';
+    try {
+      const savedTheme = localStorage.getItem('es_theme');
+      if (savedTheme === 'dark' || savedTheme === 'light') theme = savedTheme;
+    } catch (e) {}
+
+    function applyTheme(t) {
+      theme = t === 'dark' ? 'dark' : 'light';
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      try { localStorage.setItem('es_theme', theme); } catch (e) {}
+    }
+    applyTheme(theme);
+
     if (hud) {
+      const themeBtn = el('button', {
+        class: 'btn btn-xs',
+        text: theme === 'dark' ? '☀️ Light Theme' : '🌙 Dark Theme',
+        title: 'Switch between Light (Blue-Gray-White) and Dark Theme',
+        onclick: () => {
+          sfx.click(560);
+          applyTheme(theme === 'dark' ? 'light' : 'dark');
+          themeBtn.textContent = theme === 'dark' ? '☀️ Light Theme' : '🌙 Dark Theme';
+        },
+      });
       const ideoBtn = el('button', {
         class: 'btn btn-xs',
-        style: { borderColor: 'rgba(56,189,248,0.5)', color: '#bae6fd' },
         text: '🧭 Ideology & Spectrum',
         title: 'Open the 11-Country Political Spectrum & Party Ideology Codex',
         onclick: () => {
@@ -1537,6 +1563,7 @@
           if (sfx.enabled) sfx.click(600);
         },
       });
+      hud.appendChild(themeBtn);
       hud.appendChild(ideoBtn);
       hud.appendChild(coalBtn);
       hud.appendChild(sfxBtn);
@@ -1558,7 +1585,6 @@
         el('div', { class: 'row', style: { gap: '8px' } }, [
           el('button', {
             class: 'btn',
-            style: { borderColor: 'rgba(56,189,248,0.45)', color: '#bae6fd' },
             text: '🧭 Party Ideologies & Spectrum',
             onclick: () => {
               ES.openIdeologyModal(m.id, () => open(m.id));

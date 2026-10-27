@@ -46,12 +46,12 @@
       .uk-map-layout { display: grid; grid-template-columns: 1fr 220px; gap: 12px; align-items: start; }
       @media (max-width: 1180px) { .uk-map-layout { grid-template-columns: 1fr; } }
       .uk-hex-svg { width: 100%; height: auto; max-height: 760px; display: block; margin: 0 auto; user-select: none; }
-      .uk-hex-svg path.unit { stroke: #12151c; stroke-width: 3.2; transition: opacity 0.12s; }
-      .uk-hex-svg path.unit:hover { stroke: #ffffff; stroke-width: 9; filter: brightness(1.2); }
-      .uk-hex-svg path.unit.override { stroke: #ffffff; stroke-width: 7; stroke-dasharray: 12 6; }
+      .uk-hex-svg path.unit { stroke: var(--card); stroke-width: 3.2; transition: opacity 0.12s; }
+      .uk-hex-svg path.unit:hover { stroke: var(--heading); stroke-width: 9; filter: brightness(1.15); }
+      .uk-hex-svg path.unit.override { stroke: var(--heading); stroke-width: 7; stroke-dasharray: 12 6; }
       .uk-hex-svg path.unit.dimmed { opacity: 0.16; }
-      .uk-hex-svg path.unit.search-hit { stroke: #ffffff; stroke-width: 10; }
-      .uk-hex-svg path.reg-boundary { fill: none; stroke: rgba(255,255,255,0.52); stroke-width: 5.5; pointer-events: none; stroke-linecap: round; stroke-linejoin: round; }
+      .uk-hex-svg path.unit.search-hit { stroke: var(--heading); stroke-width: 10; }
+      .uk-hex-svg path.reg-boundary { fill: none; stroke: rgba(15,23,42,0.42); stroke-width: 5.5; pointer-events: none; stroke-linecap: round; stroke-linejoin: round; }
       .uk-side-panel { display: flex; flex-direction: column; gap: 10px; background: var(--bg2); border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
       .uk-search-input { width: 100%; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font-size: 12.5px; outline: none; }
       .uk-search-input:focus { border-color: var(--accent); }
@@ -67,7 +67,7 @@
       .uk-kpi .k-val { font-size: 18px; font-weight: 700; margin-top: 2px; }
       .uk-bars { display: flex; flex-direction: column; gap: 5px; margin: 6px 0; }
       .uk-bar-row { display: grid; grid-template-columns: 110px 1fr 48px; gap: 8px; align-items: center; font-size: 12px; }
-      .uk-bar-track { height: 10px; background: #2c3342; border-radius: 5px; overflow: hidden; }
+      .uk-bar-track { height: 10px; background: var(--track-bg); border-radius: 5px; overflow: hidden; }
       .uk-bar-fill { height: 100%; border-radius: 5px; }
       .uk-results-wrap table.results td:first-child { flex-wrap: nowrap; }
     `;

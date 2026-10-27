@@ -30,7 +30,7 @@
       .fr-matrix th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; padding: 6px 6px; border-bottom: 1px solid var(--line); }
       .fr-matrix td { padding: 6px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
       .fr-matrix input[type="number"] { width: 54px; padding: 3px 5px; font-size: 12px; }
-      .fr-transfer-mini { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: #2d3442; min-width: 70px; }
+      .fr-transfer-mini { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: var(--track-bg); min-width: 70px; }
       .fr-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px, 1fr)); gap: 8px; margin-bottom: 12px; }
       .fr-kpi { background: var(--bg2); border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; display: flex; flex-direction: column; gap: 2px; }
       .fr-kpi .kval { font-size: 20px; font-weight: 800; color: var(--text); }
