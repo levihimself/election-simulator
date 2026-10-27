@@ -63,6 +63,27 @@
     return null;
   };
 
+  /**
+   * Official Party Logo Badge - solidly filled with the authentic brand color of the party
+   */
+  ES.partyLogo = function (p, opt = {}) {
+    if (!p) return null;
+    const color = p.color || '#3b82f6';
+    const txtColor = util.textOn ? util.textOn(color) : '#ffffff';
+    let label = (p.short || p.shortParty || p.code || (p.name ? p.name.split(' ')[0] : p.id || '')).slice(0, 5);
+    const isSm = opt.size === 'sm';
+    return el('span', {
+      class: isSm ? 'party-logo party-logo-sm' : 'party-logo',
+      style: {
+        background: color,
+        '--p-color': color,
+        color: txtColor,
+      },
+      title: p.name ? `${p.name} (${label})` : label,
+      text: label,
+    });
+  };
+
   /* --------------------------------------------------------------------- */
   /* Game Sound Effects (Web Audio API Synthesizer)                         */
   /* --------------------------------------------------------------------- */
@@ -893,11 +914,15 @@
       const pic = p.img || ES.leaderImg(p.leader) || ES.leaderImg(p.name);
       const ideo = ES.getIdeology(p);
       const badge = ideo ? ES.ideologyBadge(ideo) : null;
+      const logoBadge = ES.partyLogo(p);
       const row = el('div', { class: 'slider-row' }, [
         el('div', { class: 'slider-label' }, [
           pic
-            ? el('img', { class: 'leader-avatar', src: pic, alt: p.leader || p.name, style: { '--c': p.color } })
-            : el('span', { class: 'swatch', style: { background: p.color } }),
+            ? el('div', { style: { display: 'flex', alignItems: 'center', gap: '6px' } }, [
+                el('img', { class: 'leader-avatar', src: pic, alt: p.leader || p.name, style: { '--c': p.color } }),
+                logoBadge,
+              ])
+            : logoBadge,
           el('div', { class: 'slider-names' }, [
             el('div', { class: 'pname-row' }, [
               el('span', { class: 'pname', text: p.name }),
@@ -960,7 +985,7 @@
         el('tr', { class: r.dim ? 'dim' : '' }, [
           el('td', {}, [
             pic ? el('img', { class: 'leader-avatar-sm', src: pic, alt: r.leader || r.name, style: { '--c': r.color } }) : null,
-            el('span', { class: 'swatch', style: { background: r.color } }),
+            ES.partyLogo(r, { size: 'sm' }),
             el('span', { class: 'rname', text: r.name }),
             badge,
             r.leader ? el('span', { class: 'rleader' + (pic ? ' with-pic' : ''), text: r.leader }) : null,
@@ -1131,8 +1156,11 @@
         { class: 'coal-card' + (chosen.has(p.id) ? ' on' : ''), style: { '--c': p.color } },
         [
           pic
-            ? el('img', { class: 'leader-avatar-sm', src: pic, alt: p.leader || p.name, style: { '--c': p.color } })
-            : el('span', { class: 'swatch', style: { background: p.color } }),
+            ? el('div', { style: { display: 'flex', alignItems: 'center', gap: '6px' } }, [
+                el('img', { class: 'leader-avatar-sm', src: pic, alt: p.leader || p.name, style: { '--c': p.color } }),
+                ES.partyLogo(p, { size: 'sm' }),
+              ])
+            : ES.partyLogo(p, { size: 'sm' }),
           el('div', { class: 'coal-card-info' }, [
             el('span', { class: 'coal-card-name', text: p.short || p.name }),
             badge,

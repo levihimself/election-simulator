@@ -71,7 +71,10 @@
       const list = CANDIDATES[party];
       const opts = list.map((c) => ({ value: c.id, label: c.name }));
       const wrap = el('div', { class: 'ticket', style: { borderLeft: `4px solid ${COLORS[party]}`, paddingLeft: '10px', marginBottom: '10px' } });
-      wrap.appendChild(el('div', { class: 'pname', text: party === 'D' ? 'Democratic Party' : 'Republican Party' }));
+      wrap.appendChild(el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' } }, [
+        ES.partyLogo({ short: party === 'D' ? 'DEM' : 'GOP', color: COLORS[party], name: party === 'D' ? 'Democratic Party' : 'Republican Party' }, { size: 'sm' }),
+        el('div', { class: 'pname', style: { fontWeight: '700', color: COLORS[party] }, text: party === 'D' ? 'Democratic Party' : 'Republican Party' }),
+      ]));
       const pSel = ui.select(opts, state[party].p, (v) => {
         state[party].p = v;
         if (state[party].vp === v) state[party].vp = list.find((c) => c.id !== v).id;
@@ -182,7 +185,10 @@
       const cards = el('div', { class: 'cands' });
       [['D', dName, dVp, 'Democratic'], ['R', rName, rVp, 'Republican']].forEach(([p, n, vp, pn]) => {
         cards.appendChild(el('div', { class: 'cand' + (winner === p ? ' win' : ''), style: { '--c': COLORS[p] } }, [
-          el('div', { class: 'cname', text: n }),
+          el('div', { style: { display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' } }, [
+            ES.partyLogo({ short: p === 'D' ? 'DEM' : 'GOP', color: COLORS[p], name: pn }, { size: 'sm' }),
+            el('div', { class: 'cname', text: n }),
+          ]),
           el('div', { class: 'cparty', text: `${pn} · VP: ${vp}` }),
           el('div', { class: 'cval', style: { color: COLORS[p] }, text: t[p] }),
           winner === p ? el('span', { class: 'badge', text: 'WINS PRESIDENCY' }) : null,
