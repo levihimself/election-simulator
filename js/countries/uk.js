@@ -6,7 +6,7 @@
    - 1997 General Election (Tony Blair "New Labour" 179-seat landslide)
    - 2022 July–September Conservative Party Leadership Election
      (Liz Truss vs Rishi Sunak vs Penny Mordaunt vs Kemi Badenoch, toggleable candidates,
-      MP ballot rounds 1–5, and final membership postal vote)
+      interactive percentage sliders, MP ballot rounds 1–5, and final membership postal vote)
    ========================================================================= */
 (function () {
   'use strict';
@@ -52,7 +52,7 @@
       .uk-superline { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #ffb547; box-shadow: 0 0 0 1px rgba(0,0,0,0.5); }
 
       /* Tory Leadership Roster Styles */
-      .uk-cand-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-top: 10px; }
+      .uk-cand-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; margin-top: 10px; }
       .uk-cand-card { background: var(--bg2); border: 1px solid var(--line); border-radius: 9px; padding: 12px; display: flex; flex-direction: column; gap: 8px; transition: 0.18s; position: relative; }
       .uk-cand-card.eliminated { opacity: 0.52; filter: grayscale(0.65); border-style: dashed; }
       .uk-cand-card.winner { border-color: var(--gold, #f59e0b); box-shadow: 0 0 14px rgba(245, 158, 11, 0.22); }
@@ -72,6 +72,14 @@
       .uk-stage-btn { background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font-size: 11.5px; font-weight: 600; cursor: pointer; transition: 0.15s; }
       .uk-stage-btn:hover { border-color: var(--accent); }
       .uk-stage-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+      /* Inline Candidate Percentage Slider on Cards */
+      .uk-cand-slider-box { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
+      .uk-cand-slider-head { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-bottom: 4px; color: var(--muted); font-weight: 600; }
+      .uk-cand-slider-row { display: flex; align-items: center; gap: 8px; }
+      .uk-cand-range { flex: 1; height: 6px; -webkit-appearance: none; appearance: none; background: var(--track-bg, #2a3346); border-radius: 3px; outline: none; cursor: pointer; }
+      .uk-cand-range::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; border-radius: 50%; background: var(--c, #3b82f6); border: 2px solid #fff; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+      .uk-cand-num { width: 62px; background: var(--card); border: 1px solid var(--line); border-radius: 5px; color: var(--text); padding: 3px 6px; font-size: 11.5px; font-weight: 700; text-align: right; }
     `;
     document.head.appendChild(st);
   }
@@ -305,6 +313,59 @@
   };
 
   /* --------------------------------------------------------------------- */
+  /* Stage Baseline Percentage Helper                                      */
+  /* --------------------------------------------------------------------- */
+  function getStageBaselinePcts(stageId) {
+    const pcts = {};
+    if (stageId === 'members') {
+      pcts.truss = 57.4;
+      pcts.sunak = 42.6;
+    } else if (stageId === 'r5') {
+      pcts.sunak = 38.6;
+      pcts.truss = 31.8;
+      pcts.mordaunt = 29.6;
+    } else if (stageId === 'r4') {
+      pcts.sunak = 33.1;
+      pcts.mordaunt = 25.8;
+      pcts.truss = 24.1;
+      pcts.badenoch = 16.5;
+    } else if (stageId === 'r3') {
+      pcts.sunak = 32.2;
+      pcts.mordaunt = 23.0;
+      pcts.truss = 19.9;
+      pcts.badenoch = 16.2;
+      pcts.tugendhat = 8.7;
+    } else if (stageId === 'r2') {
+      pcts.sunak = 28.4;
+      pcts.mordaunt = 23.3;
+      pcts.truss = 18.0;
+      pcts.badenoch = 13.8;
+      pcts.tugendhat = 9.0;
+      pcts.braverman = 7.6;
+    } else if (stageId === 'alt_mordaunt') {
+      pcts.mordaunt = 66.8;
+      pcts.sunak = 33.2;
+    } else if (stageId === 'alt_badenoch') {
+      pcts.badenoch = 56.0;
+      pcts.truss = 44.0;
+    } else {
+      // r1 or all
+      pcts.sunak = 24.6;
+      pcts.mordaunt = 18.7;
+      pcts.truss = 14.0;
+      pcts.badenoch = 11.2;
+      pcts.tugendhat = 10.3;
+      pcts.braverman = 8.9;
+      pcts.zahawi = 7.0;
+      pcts.hunt = 5.0;
+    }
+    SCENARIOS['2022_tory'].candidates.forEach((c) => {
+      if (pcts[c.id] === undefined) pcts[c.id] = 0;
+    });
+    return pcts;
+  }
+
+  /* --------------------------------------------------------------------- */
   /* Persistent Module State                                               */
   /* --------------------------------------------------------------------- */
   let state = null;
@@ -333,13 +394,16 @@
         // By default, stage is members ballot (Truss vs Sunak active)
         activeCands[c.id] = c.id === 'truss' || c.id === 'sunak';
       });
+      const initialPcts = getStageBaselinePcts('members');
       state = {
         scenId,
         type: 'leadership',
         stage: 'members', // 'r1' | 'r2' | 'r3' | 'r4' | 'r5' | 'members' | 'custom'
         electorate: 'member', // 'mp' | 'member'
         activeCandidates: activeCands,
-        candidateOverrides: {},
+        candidatePcts: clone(initialPcts),
+        overrides: {},
+        customVotes: {},
       };
     }
   }
@@ -381,7 +445,6 @@
         baselineWinner = c.w24;
       } else if (scen.id === '2019') {
         baselineWinner = c.w19 || 'con';
-        // Synthesize 2019 baseline shares from 2024 shares & national shift
         baseLocal = clone(c.v);
         if (baselineWinner === 'con' && (baseLocal.con || 0) < (baseLocal.lab || 0)) {
           const tmp = baseLocal.con || 25;
@@ -408,11 +471,11 @@
 
       // 2. Apply Custom Constituency Sliders OR National Swing
       let shares = {};
-      const hasCustom = !!state.customVotes[gss];
+      const hasCustom = !!(state.customVotes && state.customVotes[gss]);
 
       if (hasCustom) {
         shares = clone(state.customVotes[gss]);
-      } else if (c.w24 === 'speaker' && !state.overrides[gss]) {
+      } else if (c.w24 === 'speaker' && !(state.overrides && state.overrides[gss])) {
         shares = clone(baseLocal);
       } else {
         const raw = {};
@@ -455,7 +518,7 @@
       const runnerUp = rankedLocal[1] ? rankedLocal[1][0] : 'con';
       const margin = rankedLocal[0] && rankedLocal[1] ? rankedLocal[0][1] - rankedLocal[1][1] : 0;
 
-      const forcedWinner = state.overrides[gss];
+      const forcedWinner = state.overrides && state.overrides[gss];
       if (forcedWinner) winner = forcedWinner;
 
       seatsByParty[winner] = (seatsByParty[winner] || 0) + 1;
@@ -510,61 +573,36 @@
     candidates.forEach((c) => (cMap[c.id] = c));
 
     const isMemberMode = state.electorate === 'member';
-    const activeIds = candidates.filter((c) => state.activeCandidates[c.id]).map((c) => c.id);
+    const activeCands = candidates.filter((c) => state.activeCandidates[c.id]);
 
-    // Initial base votes depending on stage & mode
-    const votes = {};
-    candidates.forEach((c) => {
-      if (state.candidateOverrides[c.id] !== undefined) {
-        votes[c.id] = state.candidateOverrides[c.id];
-      } else if (isMemberMode) {
-        votes[c.id] = c.memberVotes !== null ? c.memberVotes : Math.round(141725 * (c.memberPct || 25) / 100);
-      } else {
-        // MP Ballot votes according to active stage
-        if (state.stage === 'r1') votes[c.id] = c.mpVotesR1;
-        else if (state.stage === 'r2') votes[c.id] = c.mpVotesR2 || c.mpVotesR1;
-        else if (state.stage === 'r3') votes[c.id] = c.mpVotesR3 || c.mpVotesR2;
-        else if (state.stage === 'r4') votes[c.id] = c.mpVotesR4 || c.mpVotesR3;
-        else votes[c.id] = c.mpVotesR5 || c.mpVotesR4 || c.mpVotesR1;
-      }
+    // Calculate sum of raw percentages set by user sliders/inputs
+    let rawTotalPct = 0;
+    activeCands.forEach((c) => {
+      rawTotalPct += Math.max(0, +state.candidatePcts[c.id] || 0);
     });
 
-    // Reallocate votes from inactive/eliminated candidates to active candidates
-    const eliminated = candidates.filter((c) => !state.activeCandidates[c.id]);
-    eliminated.forEach((elim) => {
-      const elimVotes = votes[elim.id] || 0;
-      votes[elim.id] = 0;
-      if (elimVotes <= 0 || !activeIds.length) return;
-
-      let weightSum = 0;
-      const weights = {};
-      activeIds.forEach((aid) => {
-        const w = (elim.transferAffinities && elim.transferAffinities[aid]) || 0.15;
-        weights[aid] = w;
-        weightSum += w;
-      });
-
-      if (weightSum > 0) {
-        activeIds.forEach((aid) => {
-          votes[aid] += (weights[aid] / weightSum) * elimVotes;
-        });
-      }
-    });
-
-    const totalActiveVotes = activeIds.reduce((sum, id) => sum + (votes[id] || 0), 0);
     const pcts = {};
+    const votes = {};
+    const totalElectorate = isMemberMode ? 141725 : 358;
+
     candidates.forEach((c) => {
-      pcts[c.id] = totalActiveVotes > 0 && state.activeCandidates[c.id] ? (votes[c.id] / totalActiveVotes) * 100 : 0;
+      if (state.activeCandidates[c.id]) {
+        const raw = Math.max(0, +state.candidatePcts[c.id] || 0);
+        // Normalize percentage to 100% across all active candidates
+        const norm = rawTotalPct > 0 ? (raw / rawTotalPct) * 100 : (100 / (activeCands.length || 1));
+        pcts[c.id] = norm;
+        votes[c.id] = Math.round((norm / 100) * totalElectorate);
+      } else {
+        pcts[c.id] = 0;
+        votes[c.id] = 0;
+      }
     });
 
-    const rankedCands = candidates
-      .filter((c) => state.activeCandidates[c.id])
-      .sort((a, b) => (votes[b.id] || 0) - (votes[a.id] || 0));
-
+    const rankedCands = activeCands.slice().sort((a, b) => (pcts[b.id] || 0) - (pcts[a.id] || 0));
     const winner = rankedCands[0] || candidates[0];
     const runnerUp = rankedCands[1] || null;
     const margin = runnerUp ? (votes[winner.id] || 0) - (votes[runnerUp.id] || 0) : votes[winner.id] || 0;
-    const marginPct = runnerUp ? pcts[winner.id] - pcts[runnerUp.id] : pcts[winner.id];
+    const marginPct = runnerUp ? (pcts[winner.id] || 0) - (pcts[runnerUp.id] || 0) : pcts[winner.id] || 0;
 
     return {
       scen,
@@ -576,8 +614,9 @@
       runnerUp,
       margin,
       marginPct,
-      totalActiveVotes,
+      totalActiveVotes: totalElectorate,
       isMemberMode,
+      rawTotalPct,
     };
   }
 
@@ -649,6 +688,7 @@
     /* GENERAL ELECTION MODE: Left Controls (2024, 2019, 1997)             */
     /* ------------------------------------------------------------------- */
     let generalSliderCtrl = null;
+    let leadershipSliderCtrl = null;
 
     if (scen.type === 'general') {
       const resetNatBtn = el('button', {
@@ -726,12 +766,12 @@
       );
     } else {
       /* ------------------------------------------------------------------- */
-      /* CONSERVATIVE LEADERSHIP MODE: Left Controls (Toggleable Candidates) */
+      /* CONSERVATIVE LEADERSHIP MODE: Left Controls (Sliders & Toggles)     */
       /* ------------------------------------------------------------------- */
-      const stageCard = ui.card('Contest Stages & Toggleable Candidates');
+      // 1. Stages & Electorate Card
+      const stageCard = ui.card('Contest Stages & Voting Body');
       L.left.appendChild(stageCard.card);
 
-      // Stage Presets Bar
       const stageBar = el('div', { class: 'uk-stage-bar' });
       const stages = [
         { id: 'r1', label: 'Round 1 (8 Cands)', elect: 'mp', active: ['truss', 'sunak', 'mordaunt', 'badenoch', 'tugendhat', 'braverman', 'zahawi', 'hunt'] },
@@ -741,6 +781,7 @@
         { id: 'r5', label: 'Round 5 (Final 3)', elect: 'mp', active: ['truss', 'sunak', 'mordaunt'] },
         { id: 'members', label: 'Members Ballot (Truss vs Sunak)', elect: 'member', active: ['truss', 'sunak'] },
         { id: 'alt_mordaunt', label: 'Alt: Mordaunt vs Sunak', elect: 'member', active: ['mordaunt', 'sunak'] },
+        { id: 'alt_badenoch', label: 'Alt: Badenoch vs Truss', elect: 'member', active: ['badenoch', 'truss'] },
         { id: 'all', label: 'All 8 Active', elect: 'mp', active: ['truss', 'sunak', 'mordaunt', 'badenoch', 'tugendhat', 'braverman', 'zahawi', 'hunt'] },
       ];
 
@@ -754,7 +795,7 @@
             scen.candidates.forEach((c) => {
               state.activeCandidates[c.id] = stg.active.includes(c.id);
             });
-            state.candidateOverrides = {};
+            state.candidatePcts = getStageBaselinePcts(stg.id);
             render(root);
           },
         });
@@ -762,7 +803,6 @@
       });
       stageCard.body.appendChild(stageBar);
 
-      // Electorate Universe Selector (MPs vs Party Members)
       const electSelect = ui.select(
         [
           { value: 'mp', label: 'Parliamentary Ballot (358 Conservative MPs · 180 to Win)' },
@@ -774,12 +814,59 @@
           updateAll();
         }
       );
-      stageCard.body.appendChild(el('div', { style: { marginBottom: '10px' } }, [
+      stageCard.body.appendChild(el('div', { style: { marginBottom: '6px' } }, [
         el('label', { class: 'small muted', text: 'Select Voting Body / Electorate:' }),
         electSelect,
       ]));
 
-      // Toggleable Candidate Roster List in Left Card
+      // 2. Candidate Percentage Sliders Card (Interactive Sliders for Active Candidates!)
+      const resetCandsBtn = el('button', {
+        class: 'btn btn-xs',
+        text: '↺ Reset to Stage Baseline',
+        onclick: () => {
+          state.candidatePcts = getStageBaselinePcts(state.stage);
+          if (leadershipSliderCtrl) leadershipSliderCtrl.setValues(state.candidatePcts);
+          updateAll();
+        },
+      });
+
+      const slidersCard = ui.card('Candidate Vote % Sliders (Drag to Adjust)', '', resetCandsBtn);
+      L.left.appendChild(slidersCard.card);
+
+      const activeCandidateObjs = scen.candidates.filter((c) => state.activeCandidates[c.id]);
+      const sliderVals = {};
+      activeCandidateObjs.forEach((c) => {
+        sliderVals[c.id] = Math.round((state.candidatePcts[c.id] !== undefined ? state.candidatePcts[c.id] : 0) * 10) / 10;
+      });
+
+      leadershipSliderCtrl = ui.sliders(
+        activeCandidateObjs.map((c) => ({
+          id: c.id,
+          name: c.name,
+          leader: `${c.office} · ${c.wing.split('·')[0].trim()}`,
+          color: c.color,
+          short: c.name.split(' ')[1] || c.name,
+        })),
+        sliderVals,
+        {
+          max: 100,
+          step: 0.1,
+          showOthers: false,
+          onChange: (vals) => {
+            for (const cid in vals) {
+              state.candidatePcts[cid] = vals[cid];
+            }
+            state.stage = 'custom';
+            updateAll(false);
+          },
+        }
+      );
+      slidersCard.body.appendChild(leadershipSliderCtrl.el);
+
+      // 3. Toggle Candidates (Active vs Eliminated) Card
+      const toggleCard = ui.card('Toggle Candidates (Active vs Eliminated)');
+      L.left.appendChild(toggleCard.card);
+
       const toggleWrap = el('div', { style: { display: 'flex', flexDirection: 'column', gap: '6px' } });
       scen.candidates.forEach((c) => {
         const isActive = !!state.activeCandidates[c.id];
@@ -798,17 +885,43 @@
             class: 'uk-cand-toggle ' + (isActive ? 'active' : 'elim'),
             text: isActive ? '✔ In Contest' : '✖ Eliminated',
             onclick: () => {
-              state.activeCandidates[c.id] = !state.activeCandidates[c.id];
+              const nextState = !state.activeCandidates[c.id];
+              state.activeCandidates[c.id] = nextState;
               state.stage = 'custom';
-              updateAll();
+
+              // If candidate is toggled OFF, transfer their votes to other active candidates
+              if (!nextState) {
+                const elimPct = state.candidatePcts[c.id] || 0;
+                state.candidatePcts[c.id] = 0;
+                const remaining = scen.candidates.filter((x) => state.activeCandidates[x.id]);
+                if (remaining.length > 0 && elimPct > 0) {
+                  let weightSum = 0;
+                  const weights = {};
+                  remaining.forEach((rem) => {
+                    const w = (c.transferAffinities && c.transferAffinities[rem.id]) || 0.15;
+                    weights[rem.id] = w;
+                    weightSum += w;
+                  });
+                  if (weightSum > 0) {
+                    remaining.forEach((rem) => {
+                      state.candidatePcts[rem.id] = (state.candidatePcts[rem.id] || 0) + (weights[rem.id] / weightSum) * elimPct;
+                    });
+                  }
+                }
+              } else {
+                // Restore candidate to an estimated baseline percentage
+                const basePcts = getStageBaselinePcts('r1');
+                state.candidatePcts[c.id] = basePcts[c.id] || 15;
+              }
+
+              render(root);
             },
           }),
         ]);
         toggleWrap.appendChild(row);
       });
-      stageCard.body.appendChild(toggleWrap);
-
-      stageCard.body.appendChild(
+      toggleCard.body.appendChild(toggleWrap);
+      toggleCard.body.appendChild(
         ui.note(
           `<b>1922 Committee Rules:</b> MPs cast secret ballots in progressive elimination rounds until two candidates remain. Any candidate who is toggled off has their support dynamically transferred to the remaining candidates based on ideological faction affinities.`,
           'info'
@@ -1175,9 +1288,9 @@
       };
     } else {
       /* ------------------------------------------------------------------- */
-      /* LEADERSHIP CONTEST: Candidate Roster Cards with Live Toggles        */
+      /* LEADERSHIP CONTEST: Candidate Roster Cards with Live Pct Adjustment */
       /* ------------------------------------------------------------------- */
-      const candRosterCard = ui.card('Leadership Candidates (Click to Toggle Active / Eliminated)');
+      const candRosterCard = ui.card('Leadership Candidates (Adjust % or Toggle Active)');
       L.right.appendChild(candRosterCard.card);
       const rosterGrid = el('div', { class: 'uk-cand-roster' });
       candRosterCard.body.appendChild(rosterGrid);
@@ -1190,6 +1303,60 @@
           const votesVal = sim.votes[c.id] || 0;
           const pctVal = sim.pcts[c.id] || 0;
           const pic = ES.leaderImg && ES.leaderImg(c.name);
+
+          // Inline candidate slider row for editing percentage directly on card
+          let sliderRow = null;
+          if (isActive) {
+            const curVal = Math.round((state.candidatePcts[c.id] !== undefined ? state.candidatePcts[c.id] : pctVal) * 10) / 10;
+            const cRange = el('input', {
+              type: 'range',
+              class: 'uk-cand-range',
+              min: '0',
+              max: '100',
+              step: '0.1',
+              value: String(curVal),
+              style: { '--c': c.color },
+            });
+            const cNum = el('input', {
+              type: 'number',
+              class: 'uk-cand-num',
+              min: '0',
+              max: '100',
+              step: '0.1',
+              value: fmt(curVal, 1),
+            });
+
+            function onCardPctChange(newVal) {
+              const val = Math.max(0, Math.min(100, +newVal || 0));
+              state.candidatePcts[c.id] = val;
+              state.stage = 'custom';
+              if (leadershipSliderCtrl) {
+                leadershipSliderCtrl.setValues(state.candidatePcts);
+              }
+              updateAll(false);
+            }
+
+            cRange.addEventListener('input', () => {
+              cNum.value = fmt(cRange.value, 1);
+              onCardPctChange(cRange.value);
+            });
+            cNum.addEventListener('change', () => {
+              cRange.value = cNum.value;
+              onCardPctChange(cNum.value);
+            });
+
+            sliderRow = el('div', { class: 'uk-cand-slider-box' }, [
+              el('div', { class: 'uk-cand-slider-head' }, [
+                el('span', { text: 'Adjust Candidate % Share:' }),
+                el('span', { style: { color: c.color, fontWeight: '700' }, text: `${fmt(pctVal, 1)}%` }),
+              ]),
+              el('div', { class: 'uk-cand-slider-row' }, [
+                cRange,
+                cNum,
+                el('span', { class: 'small muted', text: '%' }),
+              ]),
+            ]);
+          }
 
           const card = el('div', {
             class: 'uk-cand-card' + (isWin ? ' winner' : '') + (!isActive ? ' eliminated' : ''),
@@ -1207,9 +1374,16 @@
                 class: 'uk-cand-toggle ' + (isActive ? 'active' : 'elim'),
                 text: isActive ? '✔ In Race' : '✖ Eliminated',
                 onclick: () => {
-                  state.activeCandidates[c.id] = !state.activeCandidates[c.id];
+                  const nextState = !state.activeCandidates[c.id];
+                  state.activeCandidates[c.id] = nextState;
                   state.stage = 'custom';
-                  updateAll();
+                  if (!nextState) {
+                    state.candidatePcts[c.id] = 0;
+                  } else {
+                    const basePcts = getStageBaselinePcts('r1');
+                    state.candidatePcts[c.id] = basePcts[c.id] || 15;
+                  }
+                  render(root);
                 },
               }),
             ]),
@@ -1228,9 +1402,10 @@
             ]),
             el('div', { class: 'seatbar-wrap', style: { height: '8px' } }, [
               el('div', {
-                style: { width: `${Math.min(100, pctVal)}%`, background: c.color, height: '100%', borderRadius: '4px', transition: 'width 0.2s' },
+                style: { width: `${Math.min(100, pctVal)}%`, background: c.color, height: '100%', borderRadius: '4px', transition: 'width 0.15s' },
               }),
             ]),
+            sliderRow,
           ]);
           rosterGrid.appendChild(card);
         });
@@ -1249,7 +1424,7 @@
     /* =================================================================== */
     /* LIVE SIMULATION UPDATE DISPATCHER                                   */
     /* =================================================================== */
-    function updateAll() {
+    function updateAll(syncSliders = true) {
       if (scen.type === 'general') {
         const sim = computeGeneralSim(scen, state);
         const total = scen.totalSeats;
@@ -1364,7 +1539,7 @@
       } else {
         /* Conservative Leadership Live Update */
         const sim = computeLeadershipSim(scen, state);
-        const total = sim.isMemberMode ? 141725 : 358;
+        const total = sim.totalActiveVotes;
         const majority = sim.isMemberMode ? Math.round(total / 2) : 180;
 
         // 1. Top Cards
@@ -1420,7 +1595,7 @@
           )
         );
 
-        // 4. Update Candidate Cards
+        // 4. Update Candidate Cards in Roster
         if (updateMapFills) updateMapFills(sim);
 
         // 5. Results Table
