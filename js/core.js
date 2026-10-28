@@ -54,23 +54,128 @@
     ['thürmer', 'img/leaders/thuermer_gyula.jpg'],
   ];
 
+  const WIKI_PORTRAIT_CACHE = {};
+  const WIKI_TITLE_OVERRIDES = {
+    'Frank Underwood': 'Kevin_Spacey',
+    'Claire Underwood': 'Robin_Wright',
+    'Will Conway': 'Joel_Kinnaman',
+    'Heather Dunbar': 'Elizabeth_Marvel',
+    'Jackie Sharp': 'Molly_Parker',
+    'Catherine Durant': 'Jayne_Atkinson',
+    'J.D. Vance': 'JD_Vance',
+    'Mette Frederiksen': 'Mette_Frederiksen',
+    'Troels Lund Poulsen': 'Troels_Lund_Poulsen',
+    'Lars Løkke Rasmussen': 'Lars_Løkke_Rasmussen',
+    'Alex Vanopslagh': 'Alex_Vanopslagh',
+    'Pia Olsen Dyhr': 'Pia_Olsen_Dyhr',
+    'Morten Messerschmidt': 'Morten_Messerschmidt',
+    'Inger Støjberg': 'Inger_Støjberg',
+    'Pelle Dragsted': 'Pelle_Dragsted',
+    'Volodymyr Zelensky': 'Volodymyr_Zelenskyy',
+    'Petro Poroshenko': 'Petro_Poroshenko',
+    'Yulia Tymoshenko': 'Yulia_Tymoshenko',
+    'Yuriy Boyko': 'Yuriy_Boyko',
+    'Sviatoslav Vakarchuk': 'Sviatoslav_Vakarchuk',
+    'Vladimir Putin': 'Vladimir_Putin',
+    'Gennady Zyuganov': 'Gennady_Zyuganov',
+    'Grigory Yavlinsky': 'Grigory_Yavlinsky',
+    'Vladimir Zhirinovsky': 'Vladimir_Zhirinovsky',
+    'Alexei Navalny': 'Alexei_Navalny',
+    'Sergey Sobyanin': 'Sergey_Sobyanin',
+    'Donald Tusk': 'Donald_Tusk',
+    'Jarosław Kaczyński': 'Jarosław_Kaczyński',
+    'Rafał Trzaskowski': 'Rafał_Trzaskowski',
+    'Karol Nawrocki': 'Karol_Nawrocki',
+    'Sławomir Mentzen': 'Sławomir_Mentzen',
+    'Szymon Hołownia': 'Szymon_Hołownia',
+    'Liz Truss': 'Liz_Truss',
+    'Rishi Sunak': 'Rishi_Sunak',
+    'Penny Mordaunt': 'Penny_Mordaunt',
+    'Kemi Badenoch': 'Kemi_Badenoch',
+    'Tom Tugendhat': 'Tom_Tugendhat',
+    'Suella Braverman': 'Suella_Braverman',
+    'Nadhim Zahawi': 'Nadhim_Zahawi',
+    'Jeremy Hunt': 'Jeremy_Hunt',
+    'Keir Starmer': 'Keir_Starmer',
+    'Nigel Farage': 'Nigel_Farage',
+    'Ed Davey': 'Ed_Davey',
+    'Tony Blair': 'Tony_Blair',
+    'Boris Johnson': 'Boris_Johnson',
+    'Zohran Mamdani': 'Zohran_Mamdani',
+    'Andrew Cuomo': 'Andrew_Cuomo',
+    'Curtis Sliwa': 'Curtis_Sliwa',
+  };
+  const PORTRAIT_PALETTE = [
+    ['#1d4ed8', '#93c5fd'], ['#b91c1c', '#fca5a5'], ['#047857', '#6ee7b7'],
+    ['#6d28d9', '#c4b5fd'], ['#b45309', '#fcd34d'], ['#0f766e', '#5eead4'],
+    ['#be123c', '#fda4af'], ['#1e3a8a', '#bfdbfe'], ['#374151', '#d1d5db'],
+  ];
+
+  function resolveWikiPortrait(cleanName) {
+    if (WIKI_PORTRAIT_CACHE[cleanName] !== undefined) return;
+    WIKI_PORTRAIT_CACHE[cleanName] = null;
+    const wikiTitle = WIKI_TITLE_OVERRIDES[cleanName] || cleanName.replace(/\s+/g, '_');
+    fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(wikiTitle))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d && d.thumbnail && d.thumbnail.source) {
+          WIKI_PORTRAIT_CACHE[cleanName] = d.thumbnail.source;
+          document.querySelectorAll('img[data-leader="' + CSS.escape(cleanName) + '"]').forEach((img) => {
+            img.src = d.thumbnail.source;
+          });
+        }
+      })
+      .catch(() => {});
+  }
+
   ES.leaderImg = function (str) {
     if (!str) return null;
     const low = String(str).toLowerCase();
     for (let i = 0; i < LEADER_PORTRAITS.length; i++) {
       if (low.includes(LEADER_PORTRAITS[i][0])) return LEADER_PORTRAITS[i][1];
     }
-    return null;
+    const clean = String(str).replace(/🃏/g, '').split('/')[0].split('&')[0].split('(')[0].trim();
+    if (!clean || clean === 'Various' || clean === 'Unaffiliated' || clean === 'TBD' || clean.length < 3) return null;
+    if (WIKI_PORTRAIT_CACHE[clean]) return WIKI_PORTRAIT_CACHE[clean];
+    resolveWikiPortrait(clean);
+    const words = clean.replace(/[^a-zA-ZÀ-ÿ0-9\s-]/g, '').trim().split(/\s+/);
+    const initials = (words[0]?.[0] || 'P') + (words.length > 1 ? words[words.length - 1][0] : '');
+    let h = 0;
+    for (let i = 0; i < clean.length; i++) h = (h * 31 + clean.charCodeAt(i)) >>> 0;
+    const [bg1, bg2] = PORTRAIT_PALETTE[h % PORTRAIT_PALETTE.length];
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${bg1}"/><stop offset="100%" stop-color="#0f172a"/></linearGradient></defs><rect width="64" height="64" rx="32" fill="url(#g)"/><circle cx="32" cy="24" r="11" fill="${bg2}" opacity="0.32"/><path d="M12,58 C14,42 50,42 52,58" fill="${bg2}" opacity="0.28"/><text x="32" y="37" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="21" fill="#ffffff">${initials.toUpperCase()}</text></svg>`;
+    setTimeout(() => {
+      document.querySelectorAll('img.leader-avatar, img.leader-avatar-sm').forEach((img) => {
+        if (!img.dataset.leader && img.alt) {
+          const cName = String(img.alt).replace(/🃏/g, '').split('/')[0].split('&')[0].split('(')[0].trim();
+          img.dataset.leader = cName;
+          if (WIKI_PORTRAIT_CACHE[cName]) img.src = WIKI_PORTRAIT_CACHE[cName];
+        }
+      });
+    }, 20);
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
   };
 
-  /**
-   * Official Party Logo Badge - solidly filled with the authentic brand color of the party
-   */
+  const PARTY_SYMBOLS = {
+    A: '🌹', SPD: '🌹', PSOE: '🌹', lab: '🌹', MSZP: '🌹', SD: '🌹', ps: '🌹', LEWICA: '🌹',
+    Ø: '★', O_RED: '★', LINKE: '★', LEFT: '★', lfi: '★', pcf: '☭', KPRF: '☭', ZYUGANOV: '☭', MSZMP: '☭', SUMAR: '★', PODEMOS: '🟣',
+    SF: '🌿', F: '🌿', GRUNE: '🌻', GREENS: '🌻', green: '🌍', GPC: '🌍', eco: '🌻', ALT: '🌱', Å: '🌱', LMP: '🌱', YABLOKO: '🍏', YAVLINSKY: '🍏',
+    ld: '🕊️', V: '🛡️', I: '⚡', B: '🧭', M: '🟣', FDP: '⚡', RENEW: '⚡', LPC: '🍁', KO: '🧡',
+    con: '🌳', C: '🛡️', CDU: '✚', CSU: '🦁', EPP: '★', PP: '🕊️', lr: '🇫🇷', PIS: '🦅', CPC: '🍁', FIDESZ: '🍊', TISZA: '🌊',
+    DEM: '🫏', D: '🫏', GOP: '🐘', R: '🐘',
+    SN: '🔱', ZELENSKY: '🔱', PES: '🇪🇺', POROSHENKO: '🇪🇺', BAT: '❤️', TYMOSHENKO: '❤️', OPZZH: '🕊️', HOLOS: '🎸',
+    UR: '🐻', PUTIN: '🇷🇺', LDPR: '🦅', ZHIRINOVSKY: '🦅', RODINA: '🚩', NAVALNY: '⚡', SOBYANIN: '🏛️',
+    TD: '🍀', KONF: '⚔️', MENTZEN: '⚔️', TRZASKOWSKI: '🇵🇱', NAWROCKI: '🦅',
+    O_DPP: '🇩🇰', O: '🇩🇰', AE: '🇩🇰', Æ: '🇩🇰', H: '🛡️',
+    ref: '➡️', AFD: '➡️', rn: '🔥', VOX: '🛡️', FDI: '🔥', LIKUD: '🕎',
+  };
+
   ES.partyLogo = function (p, opt = {}) {
     if (!p) return null;
     const color = p.color || '#3b82f6';
     const txtColor = util.textOn ? util.textOn(color) : '#ffffff';
     let label = (p.short || p.shortParty || p.code || (p.name ? p.name.split(' ')[0] : p.id || '')).slice(0, 5);
+    const sym = p.logo || PARTY_SYMBOLS[p.id] || PARTY_SYMBOLS[p.short] || PARTY_SYMBOLS[label] || '';
     const isSm = opt.size === 'sm';
     return el('span', {
       class: isSm ? 'party-logo party-logo-sm' : 'party-logo',
@@ -78,9 +183,12 @@
         background: color,
         '--p-color': color,
         color: txtColor,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '3px',
       },
       title: p.name ? `${p.name} (${label})` : label,
-      text: label,
+      html: sym ? `<span>${sym}</span><span>${label}</span>` : label,
     });
   };
 
@@ -418,6 +526,43 @@
       { id: 'PP', short: 'PP', name: "Partido Popular (People's Party)", leader: 'Alberto Núñez Feijóo', era: '2023–2026 Congreso', pos: 'Centre-right to Right-wing', score: 7.1, tags: 'Conservatism, Christian democracy, Economic liberalism, Spanish unionism', bloc: 'Right bloc', color: '#0056a3' },
       { id: 'VOX', short: 'Vox', name: 'Vox', leader: 'Santiago Abascal', era: '2023–2026 Congreso', pos: 'Right-wing to Far-right', score: 8.9, tags: 'Spanish ultranationalism, National conservatism, Right-wing populism', bloc: 'Right bloc', color: '#63be21' },
       { id: 'SALF', short: 'SALF', name: 'Se Acabó la Fiesta (SALF)', leader: 'Alvise Pérez', era: '2026 Polls', pos: 'Far-right', score: 9.2, tags: 'Anti-establishment populism, Anti-corruption, Right-wing populism', bloc: 'Right bloc', color: '#78350f' },
+    ],
+    denmark: [
+      { id: 'O_RED', short: 'Ø (Enhedslisten)', name: 'Red–Green Alliance (Enhedslisten)', leader: 'Pelle Dragsted', era: '2026 Folketing', pos: 'Left-wing to Far-left', score: 1.8, tags: 'Eco-socialism, Democratic socialism, Anti-capitalism', bloc: 'Red bloc', color: '#e11d48' },
+      { id: 'ALT', short: 'Å (Alternativet)', name: 'The Alternative (Alternativet)', leader: 'Franciska Rosenkilde', era: '2026 Folketing', pos: 'Left-wing', score: 2.5, tags: 'Green politics, Degrowth, Progressivism', bloc: 'Red bloc', color: '#16a34a' },
+      { id: 'SF', short: 'F (Green Left)', name: 'Green Left (Socialistisk Folkeparti)', leader: 'Pia Olsen Dyhr', era: '2026 Folketing', pos: 'Left-wing', score: 2.8, tags: 'Green socialism, Popular socialism, Pro-Europeanism', bloc: 'Red bloc (Gov 2026)', color: '#ec4899' },
+      { id: 'A', short: 'A (Soc. Dem.)', name: 'Social Democrats (Socialdemokratiet)', leader: 'Mette Frederiksen', era: '2026 Folketing', pos: 'Centre-left', score: 3.7, tags: 'Social democracy, Welfare state, Strict immigration policy', bloc: 'Red bloc (Gov 2026)', color: '#c8102e' },
+      { id: 'B', short: 'B (Radikale)', name: 'Social Liberal Party (Radikale Venstre)', leader: 'Martin Lidegaard', era: '2026 Folketing', pos: 'Centre', score: 4.7, tags: 'Social liberalism, Green liberalism, Pro-Europeanism', bloc: 'Centre (Gov 2026)', color: '#7c3aed' },
+      { id: 'M', short: 'M (Moderaterne)', name: 'Moderates (Moderaterne)', leader: 'Lars Løkke Rasmussen', era: '2026 Folketing', pos: 'Centre', score: 5.4, tags: 'Centrism, Pragmatism, Reformism', bloc: 'Centre (Gov 2026)', color: '#8b5cf6' },
+      { id: 'V', short: 'V (Venstre)', name: "Venstre, Denmark's Liberal Party", leader: 'Troels Lund Poulsen', era: '2026 Folketing', pos: 'Centre-right', score: 6.7, tags: 'Conservative liberalism, Agrarianism, Economic liberalism', bloc: 'Blue bloc', color: '#0284c7' },
+      { id: 'C', short: 'C (Konservative)', name: "Conservative People's Party", leader: 'Mona Juul', era: '2026 Folketing', pos: 'Centre-right', score: 7.0, tags: 'Liberal conservatism, Green conservatism', bloc: 'Blue bloc', color: '#15803d' },
+      { id: 'I', short: 'I (Liberal Alliance)', name: 'Liberal Alliance', leader: 'Alex Vanopslagh', era: '2026 Folketing', pos: 'Right-wing', score: 7.7, tags: 'Classical liberalism, Libertarianism, Free market', bloc: 'Blue bloc', color: '#06b6d4' },
+      { id: 'AE', short: 'Æ (Danmarksdem.)', name: 'Denmark Democrats (Danmarksdemokraterne)', leader: 'Inger Støjberg', era: '2026 Folketing', pos: 'Right-wing', score: 8.2, tags: 'Right-wing populism, Rural interests, Decentralized Denmark', bloc: 'Blue bloc', color: '#1e40af' },
+      { id: 'O_DPP', short: 'O (Dansk Folkeparti)', name: "Danish People's Party", leader: 'Morten Messerschmidt', era: '2026 Folketing', pos: 'Right-wing to Far-right', score: 8.7, tags: 'Danish nationalism, National conservatism, Hard Euroscepticism', bloc: 'Blue bloc', color: '#eab308' },
+      { id: 'H', short: 'H (Borgernes Parti)', name: "Citizens' Party (Borgernes Parti)", leader: 'Lars Boje Mathiesen', era: '2026 Folketing', pos: 'Far-right', score: 9.2, tags: 'Right-wing populism, Anti-establishment', bloc: 'Blue bloc', color: '#475569' },
+    ],
+    poland: [
+      { id: 'LEWICA', short: 'Lewica', name: 'The Left (Nowa Lewica & Razem)', leader: 'Włodzimierz Czarzasty / Magdalena Biejat / Adrian Zandberg', era: '2023–2025', pos: 'Centre-left to Left-wing', score: 2.7, tags: 'Social democracy, Progressivism, Secularism', bloc: 'Oct 15 Coalition', color: '#be123c' },
+      { id: 'KO', short: 'KO', name: 'Civic Coalition (Koalicja Obywatelska)', leader: 'Donald Tusk / Rafał Trzaskowski', era: '2023–2025', pos: 'Centre to Centre-right', score: 5.1, tags: 'Liberalism, Pro-Europeanism, Christian democracy', bloc: 'Oct 15 Coalition', color: '#f97316' },
+      { id: 'TD', short: 'Trzecia Droga', name: 'Third Way (Polska 2050 – PSL)', leader: 'Szymon Hołownia & Władysław Kosiniak-Kamysz', era: '2023–2025', pos: 'Centre to Centre-right', score: 5.9, tags: 'Christian democracy, Centrism, Agrarianism', bloc: 'Oct 15 Coalition', color: '#16a34a' },
+      { id: 'PIS', short: 'PiS', name: 'Law and Justice (Prawo i Sprawiedliwość)', leader: 'Jarosław Kaczyński / Karol Nawrocki', era: '2023–2025', pos: 'Right-wing', score: 8.1, tags: 'National conservatism, Christian right, Welfare statism', bloc: 'United Right', color: '#1e3a8a' },
+      { id: 'KONF', short: 'Konfederacja', name: 'Confederation Liberty and Independence', leader: 'Sławomir Mentzen & Krzysztof Bosak', era: '2023–2025', pos: 'Far-right', score: 9.3, tags: 'Right-wing libertarianism, Polish nationalism, Hard Euroscepticism', bloc: 'Far-right', color: '#1e293b' },
+    ],
+    ukraine: [
+      { id: 'OPZZH', short: 'OPZZH', name: 'Opposition Platform — For Life', leader: 'Yuriy Boyko', era: '2019', pos: 'Syncretic / Regionalist', score: 4.2, tags: 'Social conservatism, Regionalism', bloc: 'Opposition', color: '#1d4ed8' },
+      { id: 'BAT', short: 'Batkivshchyna', name: 'All-Ukrainian Union "Fatherland"', leader: 'Yulia Tymoshenko', era: '2019', pos: 'Centre-left / Populist', score: 4.5, tags: 'Social populism, Pro-Europeanism, Christian democracy', bloc: 'Opposition', color: '#dc2626' },
+      { id: 'SN', short: 'Sluha Narodu', name: 'Servant of the People', leader: 'Volodymyr Zelensky', era: '2019', pos: 'Centre', score: 5.0, tags: 'Centrism, Anti-corruption, Digitalization, Pro-Europeanism', bloc: 'Governing Majority', color: '#16a34a' },
+      { id: 'HOLOS', short: 'Holos', name: 'Holos (Voice)', leader: 'Sviatoslav Vakarchuk', era: '2019', pos: 'Centre to Centre-right', score: 5.5, tags: 'Liberalism, Pro-Europeanism, Anti-oligarchy', bloc: 'Pro-European', color: '#f97316' },
+      { id: 'PES', short: 'Euro. Solidarity', name: 'European Solidarity', leader: 'Petro Poroshenko', era: '2019', pos: 'Centre-right', score: 6.8, tags: 'Liberal conservatism, Civic nationalism, NATO/EU integration', bloc: 'Pro-European', color: '#7c2d12' },
+    ],
+    russia: [
+      { id: 'KPRF', short: 'KPRF', name: 'Communist Party of the Russian Federation', leader: 'Gennady Zyuganov', era: '2000–2013', pos: 'Far-left (Socially conservative)', score: 1.6, tags: 'Communism, Marxism-Leninism, Soviet patriotism', bloc: 'Systemic opposition', color: '#dc2626' },
+      { id: 'YABLOKO', short: 'Yabloko', name: 'Russian United Democratic Party "Yabloko"', leader: 'Grigory Yavlinsky', era: '2000–2013', pos: 'Centre-left to Centre', score: 4.2, tags: 'Social liberalism, Pro-Europeanism, Civil rights', bloc: 'Liberal opposition', color: '#16a34a' },
+      { id: 'NAVALNY', short: 'Navalny (RPR)', name: 'Alexei Navalny (RPR-PARNAS)', leader: 'Alexei Navalny', era: '2013 Moscow', pos: 'Centre / Anti-corruption', score: 5.2, tags: 'Anti-corruption, Democratic reform, Civic nationalism', bloc: 'Non-systemic opposition', color: '#2563eb' },
+      { id: 'SPS', short: 'SPS', name: 'Union of Right Forces', leader: 'Boris Nemtsov', era: '2000–2003', pos: 'Centre-right', score: 6.4, tags: 'Economic liberalism, Free-market reform', bloc: 'Liberal opposition', color: '#0284c7' },
+      { id: 'UR', short: 'United Russia', name: 'United Russia / Vladimir Putin / Sergey Sobyanin', leader: 'Vladimir Putin', era: '2000–2013', pos: 'Big tent / Statist', score: 7.4, tags: 'Russian statism, National conservatism', bloc: 'Ruling bloc', color: '#1e40af' },
+      { id: 'RODINA', short: 'Rodina', name: 'Motherland — National Patriotic Union', leader: 'Dmitry Rogozin', era: '2003 Duma', pos: 'Left-wing nationalism', score: 8.0, tags: 'Russian nationalism, Welfare statism', bloc: 'Nationalist', color: '#b45309' },
+      { id: 'LDPR', short: 'LDPR', name: 'Liberal Democratic Party of Russia', leader: 'Vladimir Zhirinovsky', era: '2000–2013', pos: 'Far-right', score: 9.4, tags: 'Russian ultranationalism, Right-wing populism', bloc: 'Systemic opposition', color: '#eab308' },
     ],
   };
 
@@ -911,7 +1056,7 @@
       range.addEventListener('input', () => set(range.value, range));
       num.addEventListener('change', () => set(num.value, num));
 
-      const pic = p.img || ES.leaderImg(p.leader) || ES.leaderImg(p.name);
+      const ideoForPic = ES.getIdeology(p); const pic = p.img || ES.leaderImg(p.leader) || (ideoForPic && ES.leaderImg(ideoForPic.leader)) || ES.leaderImg(p.name);
       const ideo = ES.getIdeology(p);
       const badge = ideo ? ES.ideologyBadge(ideo) : null;
       const logoBadge = ES.partyLogo(p);
@@ -978,7 +1123,7 @@
     t.appendChild(el('thead', {}, el('tr', {}, [el('th', { text: opts.nameLabel || 'Party' }), ...cols.map((c) => el('th', { text: c.label }))])));
     const tb = el('tbody');
     rows.forEach((r) => {
-      const pic = r.img || ES.leaderImg(r.leader) || ES.leaderImg(r.name);
+      const ideoForPic = ES.getIdeology(r); const pic = r.img || ES.leaderImg(r.leader) || (ideoForPic && ES.leaderImg(ideoForPic.leader)) || ES.leaderImg(r.name);
       const ideo = ES.getIdeology(r);
       const badge = ideo ? ES.ideologyBadge(ideo) : null;
       tb.appendChild(
@@ -1345,6 +1490,10 @@
     canada: '<rect width="7.5" height="20" fill="#d80621"/><rect x="7.5" width="15" height="20" fill="#fff"/><rect x="22.5" width="7.5" height="20" fill="#d80621"/><path d="M15,4.5 L16.3,8 L19.2,7.5 L17.4,10.5 L19.5,12 L16,12.5 L16,16 L14,16 L14,12.5 L10.5,12 L12.6,10.5 L10.8,7.5 L13.7,8 Z" fill="#d80621"/>',
     italy: '<rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/>',
     spain: '<rect width="30" height="5" fill="#AA151B"/><rect y="5" width="30" height="10" fill="#F1BF00"/><rect y="15" width="30" height="5" fill="#AA151B"/><rect x="6" y="7.2" width="2.8" height="5.6" rx="0.8" fill="#AA151B"/>',
+    denmark: '<rect width="30" height="20" fill="#C8102E"/><rect x="9" width="3.2" height="20" fill="#fff"/><rect y="8.4" width="30" height="3.2" fill="#fff"/>',
+    poland: '<rect width="30" height="10" fill="#fff"/><rect y="10" width="30" height="10" fill="#DC143C"/>',
+    ukraine: '<rect width="30" height="10" fill="#005BBB"/><rect y="10" width="30" height="10" fill="#FFD500"/>',
+    russia: '<rect width="30" height="6.6" fill="#fff"/><rect y="6.6" width="30" height="6.8" fill="#0039A6"/><rect y="13.4" width="30" height="6.6" fill="#D52B1E"/>',
   };
   ES.flag = function (id, h = 18) {
     const s = FLAGS[id];
@@ -1369,6 +1518,10 @@
     canada: 'Canada',
     italy: 'Italy',
     spain: 'Spain',
+    denmark: 'Denmark',
+    poland: 'Poland',
+    ukraine: 'Ukraine',
+    russia: 'Russia',
   };
 
   ES.openIdeologyModal = function (initialCid, onUpdate) {

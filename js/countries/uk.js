@@ -396,7 +396,92 @@
     });
   }
 
+  const TORY_2022_CANDIDATES = [
+    { id: 'truss', short: 'Truss', name: 'Liz Truss (Foreign Secretary)', leader: 'Liz Truss', color: '#00539f', b1: 50, b2: 64, b3: 71, b4: 86, b5: 113, membersPct: 57.4, status: 'Elected Leader (5 Sept 2022)' },
+    { id: 'sunak', short: 'Sunak', name: 'Rishi Sunak (Former Chancellor)', leader: 'Rishi Sunak', color: '#0087dc', b1: 88, b2: 101, b3: 115, b4: 118, b5: 137, membersPct: 42.6, status: "Runner-up in Members' Vote" },
+    { id: 'mordaunt', short: 'Mordaunt', name: 'Penny Mordaunt (Trade Minister)', leader: 'Penny Mordaunt', color: '#1d4ed8', b1: 67, b2: 83, b3: 82, b4: 92, b5: 105, membersPct: 0, status: 'Eliminated in 5th MP Ballot (20 Jul)' },
+    { id: 'badenoch', short: 'Badenoch', name: 'Kemi Badenoch (Former Equalities Min.)', leader: 'Kemi Badenoch', color: '#4338ca', b1: 40, b2: 49, b3: 58, b4: 59, b5: 0, membersPct: 0, status: 'Eliminated in 4th MP Ballot (19 Jul)' },
+    { id: 'tugendhat', short: 'Tugendhat', name: 'Tom Tugendhat (Foreign Affairs Chair)', leader: 'Tom Tugendhat', color: '#0284c7', b1: 37, b2: 32, b3: 31, b4: 0, b5: 0, membersPct: 0, status: 'Eliminated in 3rd MP Ballot (18 Jul)' },
+    { id: 'braverman', short: 'Braverman', name: 'Suella Braverman (Attorney General)', leader: 'Suella Braverman', color: '#1e3a8a', b1: 32, b2: 27, b3: 0, b4: 0, b5: 0, membersPct: 0, status: 'Eliminated in 2nd MP Ballot (14 Jul)' },
+    { id: 'zahawi', short: 'Zahawi', name: 'Nadhim Zahawi (Chancellor)', leader: 'Nadhim Zahawi', color: '#0369a1', b1: 25, b2: 0, b3: 0, b4: 0, b5: 0, membersPct: 0, status: 'Eliminated in 1st MP Ballot (<30 MPs)' },
+    { id: 'hunt', short: 'Hunt', name: 'Jeremy Hunt (Former Foreign Sec.)', leader: 'Jeremy Hunt', color: '#3b82f6', b1: 18, b2: 0, b3: 0, b4: 0, b5: 0, membersPct: 0, status: 'Eliminated in 1st MP Ballot (<30 MPs)' },
+  ];
+
+  function openToryLeadershipModal() {
+    let stage = 'members';
+    const memberTotals = { truss: 57.4, sunak: 42.6 };
+    ui.modal('🇬🇧 July–September 2022 Conservative Party Leadership Election (2 Stages)', (body) => {
+      const seg = ui.segmented([
+        { value: 'b1', label: 'MP Round 1 (13 Jul)' },
+        { value: 'b2', label: 'MP Round 2 (14 Jul)' },
+        { value: 'b3', label: 'MP Round 3 (18 Jul)' },
+        { value: 'b4', label: 'MP Round 4 (19 Jul)' },
+        { value: 'b5', label: 'MP Round 5 (20 Jul)' },
+        { value: 'members', label: '🏆 Stage 2: Party Members Runoff (5 Sept)' },
+      ], stage, (v) => { stage = v; renderStage(); });
+      body.appendChild(seg);
+      body.appendChild(ui.note(
+        '<b>Stage 1 (MP Ballots, 13–20 July 2022):</b> 8 candidates met the 20-MP nomination threshold (Sajid Javid, Grant Shapps, and Rehman Chishti withdrew prior). Across 5 eliminations, <b>Rishi Sunak (137 MPs)</b> and <b>Liz Truss (113 MPs)</b> advanced ahead of Penny Mordaunt (105 MPs). <b>Stage 2 (Members Postal Ballot, July–Sept 2022):</b> Liz Truss defeated Rishi Sunak <b>57.4% to 42.6%</b>.'
+      ));
+      const stageBox = el('div', { style: { marginTop: '12px' } });
+      body.appendChild(stageBox);
+
+      function renderStage() {
+        stageBox.innerHTML = '';
+        if (stage === 'members') {
+          const finalCands = [
+            { id: 'truss', short: 'Truss', name: 'Liz Truss', leader: 'Liz Truss', color: '#00539f' },
+            { id: 'sunak', short: 'Sunak', name: 'Rishi Sunak', leader: 'Rishi Sunak', color: '#0087dc' },
+          ];
+          const hcDiv = el('div');
+          const sl = ui.sliders(finalCands, memberTotals, {
+            max: 80, step: 0.1,
+            onChange: () => {
+              const n = ES.util.normalize(memberTotals, 100);
+              ES.hemicycle(hcDiv, finalCands.map((c) => ({ ...c, seats: Math.round(n[c.id]) })), {
+                total: 100, majority: 51, centerLabel: n.truss >= 50 ? 'Truss Wins' : 'Sunak Wins',
+                subtitle: `Truss ${fmt(n.truss, 1)}% vs Sunak ${fmt(n.sunak, 1)}% (141,725 valid member votes)`,
+              });
+            },
+          });
+          stageBox.appendChild(sl.el);
+          stageBox.appendChild(hcDiv);
+          const n = ES.util.normalize(memberTotals, 100);
+          ES.hemicycle(hcDiv, finalCands.map((c) => ({ ...c, seats: Math.round(n[c.id]) })), {
+            total: 100, majority: 51, centerLabel: n.truss >= 50 ? 'Truss Wins' : 'Sunak Wins',
+            subtitle: `Truss ${fmt(n.truss, 1)}% vs Sunak ${fmt(n.sunak, 1)}% (141,725 valid member votes)`,
+          });
+        } else {
+          const cands = TORY_2022_CANDIDATES.map((c) => ({
+            ...c, seats: c[stage] || 0, votes: ((c[stage] || 0) / 357) * 100, dim: (c[stage] || 0) === 0,
+          })).sort((a, b) => b.seats - a.seats);
+          const hcDiv = el('div');
+          ES.hemicycle(hcDiv, cands, { total: 358, majority: 120, centerLabel: '358 MPs', subtitle: '120 MPs guarantees Top-2 spot' });
+          stageBox.appendChild(hcDiv);
+          stageBox.appendChild(ui.resultsTable(cands, {
+            nameLabel: 'Candidate',
+            columns: [
+              { key: 'seats', label: 'MP Votes', fmt: (v) => `<b>${v}</b>` },
+              { key: 'votes', label: '% of MPs', fmt: (v) => fmt(v, 1) + '%' },
+              { key: 'status', label: 'Outcome' },
+            ],
+          }));
+        }
+      }
+      renderStage();
+    }, { wide: true });
+  }
+
   function applyPreset(name) {
+    if (name === '1997') {
+      state.overrides = {};
+      state.customVotes = {};
+      Object.assign(state.nat, {
+        lab: 43.2, con: 30.7, ld: 16.8, ref: 2.6, green: 0.3, snp: 2.0, pc: 0.5,
+        sf: 0.4, dup: 0.3, apni: 0.2, sdlp: 0.6, uup: 0.8, tuv: 0.0, other: 1.5, speaker: 0.1,
+      });
+      return;
+    }
     state.overrides = {};
     state.customVotes = {};
     if (name === '2024') {
@@ -456,7 +541,7 @@
         }),
         el('button', {
           class: 'btn',
-          text: '2019 Notional',
+          text: '2019 General Election (Johnson 365)',
           onclick: () => {
             applyPreset('2019');
             gbSliders.setValues(state.nat);
@@ -483,6 +568,21 @@
             niSliders.setValues(state.nat);
             update();
           },
+        }),
+        el('button', {
+          class: 'btn',
+          text: '1997 General Election (Blair 418)',
+          onclick: () => {
+            applyPreset('1997');
+            gbSliders.setValues(state.nat);
+            niSliders.setValues(state.nat);
+            update();
+          },
+        }),
+        el('button', {
+          class: 'btn btn-gold',
+          text: '🗳️ Jul–Sep 2022 Conservative Leadership',
+          onclick: () => openToryLeadershipModal(),
         }),
         el('button', {
           class: 'btn',
