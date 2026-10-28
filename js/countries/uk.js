@@ -127,20 +127,20 @@
       pmOutcome: 'Boris Johnson (Conservative majority, 365 seats)',
       summary: 'Boris Johnson campaigned on the slogan "Get Brexit Done", winning an 80-seat majority—the Conservatives\' largest parliamentary majority since Margaret Thatcher in 1987—by demolishing Labour\'s historic "Red Wall" across the North, Midlands, and Wales.',
       parties: [
-        { id: 'con', name: 'Conservative', short: 'Con', leader: 'Boris Johnson', color: '#0087DC', votes: 43.6, actualSeats: 365, notional2024: 372, gb: true },
-        { id: 'lab', name: 'Labour', short: 'Lab', leader: 'Jeremy Corbyn', color: '#E4003B', votes: 32.1, actualSeats: 202, notional2024: 200, gb: true },
-        { id: 'ld', name: 'Liberal Democrats', short: 'LD', leader: 'Jo Swinson', color: '#FAA61A', votes: 11.5, actualSeats: 11, notional2024: 8, gb: true },
-        { id: 'snp', name: 'Scottish National Party', short: 'SNP', leader: 'Nicola Sturgeon', color: '#FDF38E', votes: 3.9, actualSeats: 48, notional2024: 48, reg: 'S92000003', regScale: 11.5 },
-        { id: 'green', name: 'Green Party', short: 'Grn', leader: 'Jonathan Bartley & Siân Berry', color: '#02A95B', votes: 2.7, actualSeats: 1, notional2024: 1, gb: true },
-        { id: 'ref', name: 'Brexit Party', short: 'Brexit', leader: 'Nigel Farage', color: '#12B6CF', votes: 2.0, actualSeats: 0, notional2024: 0, gb: true },
-        { id: 'pc', name: 'Plaid Cymru', short: 'PC', leader: 'Adam Price', color: '#005B54', votes: 0.5, actualSeats: 4, notional2024: 2, reg: 'W92000004', regScale: 21.5 },
-        { id: 'dup', name: 'DUP', short: 'DUP', leader: 'Arlene Foster', color: '#D46A4C', votes: 0.5, actualSeats: 8, notional2024: 8, reg: 'N92000002', regScale: 36.0 },
-        { id: 'sf', name: 'Sinn Féin', short: 'SF', leader: 'Mary Lou McDonald', color: '#326760', votes: 0.5, actualSeats: 7, notional2024: 7, reg: 'N92000002', regScale: 36.0 },
-        { id: 'apni', name: 'Alliance', short: 'All', leader: 'Naomi Long', color: '#F6CB2F', votes: 0.4, actualSeats: 1, notional2024: 1, reg: 'N92000002', regScale: 36.0 },
-        { id: 'sdlp', name: 'SDLP', short: 'SDLP', leader: 'Colum Eastwood', color: '#2AA82C', votes: 0.4, actualSeats: 2, notional2024: 2, reg: 'N92000002', regScale: 36.0 },
-        { id: 'uup', name: 'UUP', short: 'UUP', leader: 'Steve Aiken', color: '#48A5EE', votes: 0.3, actualSeats: 0, notional2024: 0, reg: 'N92000002', regScale: 36.0 },
-        { id: 'speaker', name: 'Speaker', short: 'Spk', leader: 'Lindsay Hoyle', color: '#9aa3b5', votes: 0.1, actualSeats: 1, notional2024: 1 },
-        { id: 'other', name: 'Independents & Others', short: 'Ind/Oth', leader: 'Various', color: '#8a8f99', votes: 1.5, actualSeats: 1, notional2024: 0, gb: true },
+        { id: 'con', name: 'Conservative', short: 'Con', leader: 'Boris Johnson', color: '#0087DC', votes: 43.6, actualSeats: 365, gb: true },
+        { id: 'lab', name: 'Labour', short: 'Lab', leader: 'Jeremy Corbyn', color: '#E4003B', votes: 32.1, actualSeats: 202, gb: true },
+        { id: 'ld', name: 'Liberal Democrats', short: 'LD', leader: 'Jo Swinson', color: '#FAA61A', votes: 11.5, actualSeats: 11, gb: true },
+        { id: 'snp', name: 'Scottish National Party', short: 'SNP', leader: 'Nicola Sturgeon', color: '#FDF38E', votes: 3.9, actualSeats: 48, reg: 'S92000003', regScale: 11.5 },
+        { id: 'green', name: 'Green Party', short: 'Grn', leader: 'Jonathan Bartley & Siân Berry', color: '#02A95B', votes: 2.7, actualSeats: 1, gb: true },
+        { id: 'ref', name: 'Brexit Party', short: 'Brexit', leader: 'Nigel Farage', color: '#12B6CF', votes: 2.0, actualSeats: 0, gb: true },
+        { id: 'dup', name: 'DUP', short: 'DUP', leader: 'Arlene Foster', color: '#D46A4C', votes: 0.8, actualSeats: 8, reg: 'N92000002', regScale: 36.0 },
+        { id: 'sf', name: 'Sinn Féin', short: 'SF', leader: 'Mary Lou McDonald', color: '#326760', votes: 0.6, actualSeats: 7, reg: 'N92000002', regScale: 36.0 },
+        { id: 'pc', name: 'Plaid Cymru', short: 'PC', leader: 'Adam Price', color: '#005B54', votes: 0.5, actualSeats: 4, reg: 'W92000004', regScale: 21.5 },
+        { id: 'sdlp', name: 'SDLP', short: 'SDLP', leader: 'Colum Eastwood', color: '#2AA82C', votes: 0.4, actualSeats: 2, reg: 'N92000002', regScale: 36.0 },
+        { id: 'apni', name: 'Alliance', short: 'All', leader: 'Naomi Long', color: '#F6CB2F', votes: 0.4, actualSeats: 1, reg: 'N92000002', regScale: 36.0 },
+        { id: 'uup', name: 'UUP', short: 'UUP', leader: 'Steve Aiken', color: '#48A5EE', votes: 0.3, actualSeats: 0, reg: 'N92000002', regScale: 36.0 },
+        { id: 'speaker', name: 'Speaker', short: 'Spk', leader: 'Lindsay Hoyle', color: '#9aa3b5', votes: 0.1, actualSeats: 1 },
+        { id: 'other', name: 'Independents & Others', short: 'Ind/Oth', leader: 'Various', color: '#8a8f99', votes: 1.1, actualSeats: 0, gb: true },
       ],
     },
     '1997': {
@@ -411,6 +411,130 @@
   /* --------------------------------------------------------------------- */
   /* General Election 650-Constituency Simulation Model                    */
   /* --------------------------------------------------------------------- */
+  const LD_2019_SEATS = new Set([
+    'E14001080', // Bath
+    'E14001312', // Kingston and Surbiton
+    'E14001420', // Oxford West and Abingdon
+    'E14001445', // Richmond Park
+    'E14001507', // St Albans
+    'E14001556', // Twickenham
+    'E14001580', // Westmorland and Lonsdale
+    'S14000051', // Orkney and Shetland
+    'S14000082', // Edinburgh West
+    'E14001153', // Carshalton and Wallington
+    'E14001161', // Cheltenham
+  ]);
+
+  const PC_2019_SEATS = new Set([
+    'W07000096', // Dwyfor Meirionnydd
+    'W07000093', // Ceredigion Preseli
+    'W07000087', // Caerfyrddin
+    'W07000112', // Ynys Môn
+  ]);
+
+  const SCOT_CON_2019 = new Set([
+    'S14000062', // Aberdeenshire North and Moray East
+    'S14000073', // Dumfries and Galloway
+    'S14000074', // Dumfriesshire, Clydesdale and Tweeddale
+    'S14000091', // Gordon and Buchan
+    'S14000108', // Berwickshire, Roxburgh and Selkirk
+    'S14000111', // West Aberdeenshire and Kincardine
+  ]);
+
+  const EXTRA_LAB_2019 = new Set([
+    'E14001309', // Kensington
+    'E14001287', // High Peak
+  ]);
+
+  function get2019Winner(gss, c) {
+    if (c.reg === 'N92000002') return c.w19;
+    if (gss === 'E14001170' || c.n === 'Chorley') return 'speaker';
+    if (gss === 'E14001130' || c.n === 'Brighton Pavilion') return 'green';
+    if (LD_2019_SEATS.has(gss)) return 'ld';
+    if (PC_2019_SEATS.has(gss)) return 'pc';
+    if (c.reg === 'S92000003') {
+      if (gss === 'S14000080') return 'lab'; // Edinburgh South
+      if (SCOT_CON_2019.has(gss)) return 'con';
+      return 'snp';
+    }
+    if (EXTRA_LAB_2019.has(gss)) return 'lab';
+    if (c.w19 === 'lab') return 'lab';
+    return 'con';
+  }
+
+  function compute2019BaseLocal(gss, c, winner) {
+    const isScot = c.reg === 'S92000003';
+    const isWales = c.reg === 'W92000004';
+    const isNI = c.reg === 'N92000002';
+
+    if (winner === 'speaker') {
+      return { speaker: 68.3, other: 31.7 };
+    }
+
+    if (isNI) {
+      const raw = {};
+      const niVotes = c.v || {};
+      raw.dup = (niVotes.dup || (winner === 'dup' ? 45 : 20)) * 1.38;
+      raw.sf = (niVotes.sf || (winner === 'sf' ? 45 : 20)) * 0.82;
+      raw.sdlp = (niVotes.sdlp || (winner === 'sdlp' ? 45 : 12)) * 1.35;
+      raw.apni = (niVotes.apni || (winner === 'apni' ? 45 : 12)) * 1.15;
+      raw.uup = (niVotes.uup || 10) * 0.95;
+      raw.other = (niVotes.tuv || 0) + (niVotes.other || 2);
+
+      let maxOther = 0;
+      for (const k in raw) {
+        if (k !== winner && raw[k] > maxOther) maxOther = raw[k];
+      }
+      if ((raw[winner] || 0) <= maxOther) {
+        raw[winner] = maxOther + 8;
+      }
+
+      const sum = Object.values(raw).reduce((a, b) => a + b, 0);
+      const shares = {};
+      for (const k in raw) shares[k] = (raw[k] / sum) * 100;
+      return shares;
+    }
+
+    const raw = {};
+    if (isScot) {
+      raw.snp = Math.max(2, (c.v.snp || 25) + 15.2);
+      raw.con = Math.max(2, (c.v.con || 15) + 11.0);
+      raw.lab = Math.max(2, (c.v.lab || 25) - 15.5);
+      raw.ld = Math.max(1, (c.v.ld || 8) - 1.0);
+      raw.green = Math.max(0.2, (c.v.green || 3) - 3.2);
+      raw.ref = Math.max(0.1, (c.v.ref || 5) * 0.12);
+    } else if (isWales) {
+      raw.lab = Math.max(3, (c.v.lab || 30) + 2.5);
+      raw.con = Math.max(3, (c.v.con || 20) + 19.5);
+      raw.pc = Math.max(2, (c.v.pc || 10) - 4.2);
+      raw.ld = Math.max(1, (c.v.ld || 6) + 0.2);
+      raw.ref = Math.max(0.1, (c.v.ref || 10) * 0.25);
+      raw.green = Math.max(0.2, (c.v.green || 4) - 3.8);
+    } else {
+      // England: Con 47.2%, Lab 34.0%, LD 12.4%, Grn 3.0%, Ref 1.4%
+      raw.con = Math.max(3, (c.v.con || 22) + 24.2);
+      raw.lab = Math.max(3, (c.v.lab || 30) + 0.8);
+      raw.ld = Math.max(1, (c.v.ld || 10) + 0.2);
+      raw.ref = Math.max(0.1, (c.v.ref || 12) * 0.14);
+      raw.green = Math.max(0.3, (c.v.green || 5) - 4.2);
+      raw.other = Math.max(0.1, (c.v.other || 1) * 0.3);
+    }
+
+    let maxOther = 0;
+    for (const k in raw) {
+      if (k !== winner && raw[k] > maxOther) maxOther = raw[k];
+    }
+    if ((raw[winner] || 0) <= maxOther) {
+      const boost = maxOther - (raw[winner] || 0) + 6.0;
+      raw[winner] = (raw[winner] || 0) + boost;
+    }
+
+    const sum = Object.values(raw).reduce((a, b) => a + b, 0);
+    const shares = {};
+    for (const k in raw) shares[k] = (raw[k] / sum) * 100;
+    return shares;
+  }
+
   function computeGeneralSim(scen, state) {
     const pMap = {};
     scen.parties.forEach((p) => (pMap[p.id] = p));
@@ -444,13 +568,8 @@
         baseLocal = clone(c.v);
         baselineWinner = c.w24;
       } else if (scen.id === '2019') {
-        baselineWinner = c.w19 || 'con';
-        baseLocal = clone(c.v);
-        if (baselineWinner === 'con' && (baseLocal.con || 0) < (baseLocal.lab || 0)) {
-          const tmp = baseLocal.con || 25;
-          baseLocal.con = Math.max(38, (baseLocal.lab || 30) + 6);
-          baseLocal.lab = Math.max(15, tmp - 4);
-        }
+        baselineWinner = get2019Winner(gss, c);
+        baseLocal = compute2019BaseLocal(gss, c, baselineWinner);
       } else if (scen.id === '1997') {
         // 1997 baseline: Labour swept Scotland, Wales, urban & suburban England
         if (isNI) {
@@ -1496,7 +1615,7 @@
           .filter((p) => (sim.seatsByParty[p.id] || 0) > 0 || (sim.votePct[p.id] || 0) > 0.1 || p.actualSeats > 0)
           .map((p) => {
             const tot = sim.seatsByParty[p.id] || 0;
-            const baseSeats = p.notional2024 !== undefined ? p.notional2024 : p.actualSeats;
+            const baseSeats = p.actualSeats;
             const diff = tot - baseSeats;
             const diffStr =
               diff === 0
@@ -1521,7 +1640,7 @@
             columns: [
               { key: 'votes', label: 'Vote %', fmt: (v) => fmt(v, 1) + '%' },
               { key: 'seats', label: 'Sim Seats' },
-              { key: 'actual', label: scen.id === '2019' ? '2019 Notional' : 'Baseline' },
+              { key: 'actual', label: scen.id === '2019' ? '2019 Result' : scen.id === '1997' ? '1997 Result' : '2024 Result' },
             ],
           })
         );
